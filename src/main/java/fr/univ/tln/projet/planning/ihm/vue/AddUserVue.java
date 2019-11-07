@@ -9,6 +9,7 @@ import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 public class AddUserVue extends JPanelAdapter {
     // Components of the Form
@@ -197,8 +198,26 @@ public class AddUserVue extends JPanelAdapter {
 
         submit = new JButtonAdapter("Submit");
 
-        submit.addActionListener(actionEvent -> {
-            System.out.println("button click");
+        submit.addActionListener(e -> {
+
+            if(     check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText())
+                   // check( "^[a-zA-Z][a-zA-Z ]*$",lastName.getText())&&
+                   // check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText())&&
+                    //check("[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+",address.getText())&&
+                   // check("^0[0-9]{9}$",mobile.getText())&&
+                   // check( "^[a-zA-Z0-9]{5,}$",username.getText())&&
+                    //check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword().toString())
+
+            ) //AdminControler.ajouterUtlisateur();
+                System.out.println("tested");
+            else {
+
+                JDialog d = new JDialog( (JFrame) SwingUtilities.getWindowAncestor(this), "Erreur de saisie");
+                d.add(new JLabel("Veuillez remplir correctement tous les champs!"));
+                d.setSize(500, 200);
+                d.setLocation(0,500);
+                d.setVisible(true);
+            }
         });
         addComponentWithPanel(submit,panelRight);
 
@@ -217,6 +236,9 @@ public class AddUserVue extends JPanelAdapter {
         subPanel.add(component);
         subPanel.setOpaque(false);
         panel.add(subPanel);
+    }
+    private static boolean check(String regex,String text){
+        return Pattern.compile(regex).matcher(text).matches();
     }
 
 
