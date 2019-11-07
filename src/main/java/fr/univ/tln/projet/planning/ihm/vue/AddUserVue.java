@@ -23,6 +23,8 @@ public class AddUserVue extends JPanelAdapter {
     private JLabel passwordLabel;
     private JPasswordField password;
     private JLabel emailLabel;
+    private  JLabel statusLabel;
+    private  JComboBox status;
     private JTextField email;
     private JLabel addressLabel;
     private JTextField address;
@@ -70,7 +72,7 @@ public class AddUserVue extends JPanelAdapter {
         BorderLayout borderLayout=new BorderLayout();
 
         //Right layout
-        GridLayout gridLayoutRight=new GridLayout(4, 2);
+        GridLayout gridLayoutRight=new GridLayout(5, 2);
         gridLayoutRight.setHgap(2);
         gridLayoutRight.setVgap(2);
         //panel for Right layout
@@ -144,7 +146,7 @@ public class AddUserVue extends JPanelAdapter {
         gengp.add(female);
         addComponentWithPanel(panelButton,panelLeft);
 
-        dobLabel=new JLabelAdapter("date de naissance");
+        dobLabel=new JLabelAdapter("Birthday");
         addComponentWithPanel(dobLabel,panelLeft);
 
         date = new JComboBox(dates);
@@ -170,7 +172,7 @@ public class AddUserVue extends JPanelAdapter {
 
         ///right panel
 
-        usernameLabel= new JLabelAdapter("username");
+        usernameLabel= new JLabelAdapter("Username");
         addComponentWithPanel(usernameLabel,panelRight);
         username=new JTextFieldAdapter();
         addComponentWithPanel(username,panelRight);
@@ -180,11 +182,18 @@ public class AddUserVue extends JPanelAdapter {
         email=new JTextFieldAdapter();
         addComponentWithPanel(email,panelRight);
 
-        passwordLabel= new JLabelAdapter("password");
+        passwordLabel= new JLabelAdapter("Password");
         addComponentWithPanel(passwordLabel,panelRight);
         password=new JPasswordFieldAdapter();
         addComponentWithPanel(password,panelRight);
 
+        statusLabel=new JLabelAdapter("Status");
+        addComponentWithPanel(statusLabel,panelRight);
+
+        status = new JComboBox(new String[]{"Etudiant", "Enseignant","Responsable","Admin"});
+        status.setFont(new Font("Arial", Font.BOLD, 13));
+        status.setOpaque(false);
+        addComponentWithPanel(status,panelRight);
 
         submit = new JButtonAdapter("Submit");
 
@@ -201,13 +210,6 @@ public class AddUserVue extends JPanelAdapter {
 
 
 
-    }
-
-    private void addComponentWithPanel(Component component){
-        JPanel subPanel= new JPanel();
-        subPanel.add(component);
-        subPanel.setOpaque(false);
-        this.add(subPanel);
     }
 
     private void addComponentWithPanel(Component component,JPanel panel){
