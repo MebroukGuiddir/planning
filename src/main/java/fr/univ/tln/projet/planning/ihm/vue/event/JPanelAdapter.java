@@ -3,7 +3,7 @@ package fr.univ.tln.projet.planning.ihm.vue.event;
 import javax.swing.*;
 import java.awt.*;
 
-public  class JPanelAdapter extends JPanel implements Observer {
+public  class JPanelAdapter extends JPanel implements ObserverJFrame {
 
     TypePanel typePanel;
 

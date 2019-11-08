@@ -1,6 +1,6 @@
 package fr.univ.tln.projet.planning.modele.observer;
 
-import fr.univ.tln.projet.planning.ihm.vue.event.Observer;
+import fr.univ.tln.projet.planning.modele.observer.Observer;
 
 public interface Observable {
     public void addObserver(Observer obs);

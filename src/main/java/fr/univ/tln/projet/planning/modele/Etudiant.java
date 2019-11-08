@@ -1,12 +1,15 @@
 package fr.univ.tln.projet.planning.modele;
 
-public class Etudiant extends Utilisateurs {
-    public Etudiant() {
-    }
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-    public Etudiant(String nom, String prenom, String username, String password, String email, int dateNaissance) {
-        super(nom, prenom, username, password, email, dateNaissance);
-    }
+@Setter
+@SuperBuilder
+@Getter
+@ToString
+public class Etudiant extends Utilisateurs {
 
 
 }

@@ -1,5 +1,8 @@
 package fr.univ.tln.projet.planning.ihm.vue;
 
+import fr.univ.tln.projet.planning.controler.AbstractControler;
+import fr.univ.tln.projet.planning.controler.Controler;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -9,8 +12,10 @@ public class LoginVue extends JFrame implements ActionListener  {
     JTextField tf1;
     JButton btn1;
     JPasswordField p1;
-    public LoginVue() {
-
+    AbstractControler controler;
+    public LoginVue(AbstractControler controler) {
+        super();
+        this.controler=controler;
         this.setTitle("Connexion");
         l1 = new JLabel("Login Form");
         l1.setForeground(Color.blue);

@@ -1,6 +1,8 @@
 package fr.univ.tln.projet.planning.ihm.vue;
 
 
+import fr.univ.tln.projet.planning.controler.AbstractControler;
+import fr.univ.tln.projet.planning.controler.Controler;
 import fr.univ.tln.projet.planning.ihm.components.JButtonAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JLabelAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JPasswordFieldAdapter;
@@ -14,7 +16,7 @@ import java.util.regex.Pattern;
 public class AddUserVue extends JPanelAdapter {
     // Components of the Form
 
-
+    private AbstractControler adminControler;
     private JLabel firstNameLabel;
     private JTextField firstName;
     private JLabel lastNameLabel;
@@ -67,8 +69,9 @@ public class AddUserVue extends JPanelAdapter {
 
     // constructor, to initialize the components
     // with default values.
-    public AddUserVue(TypePanel typePanel)
+    public AddUserVue(TypePanel typePanel, AbstractControler controler)
     {    super(typePanel);
+        adminControler=controler;
         //principal layout
         BorderLayout borderLayout=new BorderLayout();
 
@@ -208,8 +211,8 @@ public class AddUserVue extends JPanelAdapter {
                    // check( "^[a-zA-Z0-9]{5,}$",username.getText())&&
                     //check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword().toString())
 
-            ) //AdminControler.ajouterUtlisateur();
-                System.out.println("tested");
+            ) adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword().toString(),username.getText(),date.toString(),gender.getText(),address.getText(),mobile.getText(),status.getSelectedItem().toString());
+
             else {
 
                 JDialog d = new JDialog( (JFrame) SwingUtilities.getWindowAncestor(this), "Erreur de saisie");
@@ -223,7 +226,13 @@ public class AddUserVue extends JPanelAdapter {
 
         reset = new JButtonAdapter("Reset");
         reset.addActionListener(actionEvent -> {
-
+                   firstName.setText("");
+                   lastName.setText("");
+                   address.setText("");
+                   email.setText("");
+                   password.setText("");
+                   username.setText("");
+                   mobile.setText("");
         });
         addComponentWithPanel(reset,panelRight);
 

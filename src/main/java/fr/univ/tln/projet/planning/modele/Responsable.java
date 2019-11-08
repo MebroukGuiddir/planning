@@ -9,6 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @ToString
-public class Enseignant extends Utilisateurs {
+public class Responsable extends Enseignant {
 
 }

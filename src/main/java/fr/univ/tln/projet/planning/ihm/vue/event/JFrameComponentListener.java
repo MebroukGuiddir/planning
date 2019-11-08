@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class JFrameComponentListener extends JFrame implements Observable  {
-    private ArrayList<Observer> listObserver = new ArrayList<Observer>();
+public class JFrameComponentListener extends JFrame implements ObservableJfram {
+    private ArrayList<ObserverJFrame> listObserver = new ArrayList<ObserverJFrame>();
     public JFrameComponentListener(String title) {
         super(title);
         final JFrame jFrame=this;
@@ -46,18 +46,18 @@ public class JFrameComponentListener extends JFrame implements Observable  {
 
 
     //Implémentation du pattern observer
-    public void addObserver(Observer obs) {
+    public void addObserver(ObserverJFrame obs) {
         this.listObserver.add(obs);
     }
 
     public void notifyObserver(Dimension dimension) {
 
 
-        for(Observer obs : listObserver)
+        for(ObserverJFrame obs : listObserver)
             obs.update(dimension);
     }
 
     public void removeObserver() {
-        listObserver = new ArrayList<Observer>();
+        listObserver = new ArrayList<ObserverJFrame>();
     }
 }

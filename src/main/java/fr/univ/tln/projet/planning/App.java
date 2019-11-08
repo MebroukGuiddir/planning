@@ -1,14 +1,19 @@
 package fr.univ.tln.projet.planning;
 
+import fr.univ.tln.projet.planning.controler.AbstractControler;
+import fr.univ.tln.projet.planning.controler.Controler;
 import fr.univ.tln.projet.planning.ihm.vue.*;
 import fr.univ.tln.projet.planning.ihm.components.*;
 import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import fr.univ.tln.projet.planning.ihm.vue.event.JFrameComponentListener;
 import fr.univ.tln.projet.planning.ihm.vue.JMenu;
+import fr.univ.tln.projet.planning.modele.AdminModele;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Hello world!
@@ -17,8 +22,14 @@ import java.util.Calendar;
 public class App 
 {
     public static void main( String[] args )
-    {
-       // Fenetre;
+    {   javax.swing.SwingUtilities.invokeLater(() -> {
+
+        AdminModele adminModele = new AdminModele();
+
+        //Création du contrôleur
+        AbstractControler controler = new Controler(adminModele);
+
+        //Création de notre fenêtre avec le contrôleur en paramètre
         final JFrameComponentListener frame = new JFrameComponentListener("Hyper-Planning");
 
         frame.setResizable(false);
@@ -30,7 +41,7 @@ public class App
         JFooter jFooter= new JFooter();
         jFooter.setJFooterVue(1000,50,new Color(7, 21, 23));
         //body
-        JPanelAdapter p1=new AddUserVue(JPanelAdapter.TypePanel.SECTION);
+        JPanelAdapter p1=new AddUserVue(JPanelAdapter.TypePanel.SECTION,controler);
         JPanelAdapter p2=new JPanelAdapter(JPanelAdapter.TypePanel.SECTION);
         p2.add(new JLabel("2"));
         JPanelAdapter p3=new JPanelAdapter(JPanelAdapter.TypePanel.SECTION);
@@ -51,5 +62,7 @@ public class App
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+    });
     }
 }

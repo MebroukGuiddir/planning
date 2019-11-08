@@ -2,12 +2,18 @@ package fr.univ.tln.projet.planning.modele;
 
 public interface IAdmin {
 
-    public IAdmin addEtudiant(Etudiant etudiant);
-    public IAdmin deleteEtudiant(Etudiant etudiant);
-    public IAdmin modifierEtudiant(Etudiant etudiant);
-    public IAdmin addEnseignant(Enseignant enseignant);
-    public IAdmin deleteEnseignant(Enseignant enseignant);
-    public IAdmin modifierEnseignant(Enseignant enseignant);
-    public IAdmin listEtudiant();
-    public IAdmin listEnseignant();
+     boolean addEtudiant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+     boolean deleteEtudiant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+     boolean modifierEtudiant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+
+     boolean  addEnseignant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+     boolean deleteEnseignant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+     boolean modifierEnseignant(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+
+     boolean addResponsable(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile);
+
+     boolean listEtudiant();
+     boolean listEnseignant();
+
+    boolean addAdmin(String nom, String prenom, String email, String password, String username, String birthday, String genre, String adresse, String mobile);
 }
