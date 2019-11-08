@@ -23,4 +23,10 @@ public abstract class AbstractControler {
       }
       return true;
     }
+
+    public boolean controlerLogin(String username ,String Password){
+
+         return adminModele.UserLogin(username ,Password);
+
+    }
 }

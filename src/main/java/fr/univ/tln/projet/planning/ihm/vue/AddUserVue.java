@@ -2,7 +2,6 @@ package fr.univ.tln.projet.planning.ihm.vue;
 
 
 import fr.univ.tln.projet.planning.controler.AbstractControler;
-import fr.univ.tln.projet.planning.controler.Controler;
 import fr.univ.tln.projet.planning.ihm.components.JButtonAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JLabelAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JPasswordFieldAdapter;
@@ -203,13 +202,13 @@ public class AddUserVue extends JPanelAdapter {
 
         submit.addActionListener(e -> {
 
-            if(     check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText())
-                   // check( "^[a-zA-Z][a-zA-Z ]*$",lastName.getText())&&
-                   // check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText())&&
-                    //check("[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+",address.getText())&&
-                   // check("^0[0-9]{9}$",mobile.getText())&&
-                   // check( "^[a-zA-Z0-9]{5,}$",username.getText())&&
-                    //check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword().toString())
+            if(     check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText())&&
+                    check( "^[a-zA-Z][a-zA-Z ]*$",lastName.getText())&&
+                   check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText())&&
+                  //  check("[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+",address.getText())&&
+                   check("^0[0-9]{9}$",mobile.getText())&&
+                    check( "^[a-zA-Z0-9]{5,}$",username.getText())&&
+                    check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword().toString())
 
             ) adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword().toString(),username.getText(),date.toString(),gender.getText(),address.getText(),mobile.getText(),status.getSelectedItem().toString());
 
