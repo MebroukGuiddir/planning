@@ -15,13 +15,12 @@ public class JMenu extends JPanelAdapter {
     private JLabel user=new JLabel("Espace Admin");
     private  JList jList = new JList();
     private ArrayList <JPanelAdapter> panels=new ArrayList();
+    private JPanelAdapter panelMenu=new JPanelAdapter(TypePanel.MENU);
+    private    DefaultListModel modele = new DefaultListModel();
 
     public JPanelAdapter getPanelMenu() {
         return panelMenu;
     }
-
-    private JPanelAdapter panelMenu=new JPanelAdapter(TypePanel.MENU);
-    private    DefaultListModel modele = new DefaultListModel();
     public JMenu(){
      super(TypePanel.MENU);
      this.setLayout(new  FlowLayout(FlowLayout.LEFT,0, 0));

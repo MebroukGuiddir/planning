@@ -71,10 +71,10 @@ public class LoginVue extends JFrame implements  Observer {
         btn1.setForeground(new Color(199, 201, 202));
 
         btn1.addActionListener(actionEvent -> {
-            if(
+            if(true
 
-                    check( "^[a-zA-Z0-9]{5,}$",tf1.getText())&&
-                            check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",String.valueOf(p1.getPassword()))
+                    //check( "^[a-zA-Z0-9]{5,}$",tf1.getText())&&
+                          //  check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",String.valueOf(p1.getPassword()))
 
             ) controler.controlerLogin(tf1.getText(),String.valueOf(p1.getPassword()));
 
@@ -116,7 +116,7 @@ public class LoginVue extends JFrame implements  Observer {
         //Création de notre fenêtre avec le contrôleur en paramètre
         final JFrameComponentListener frame = new JFrameComponentListener("Hyper-Planning");
 
-        frame.setResizable(false);
+       // frame.setResizable(false);
 
         //header
         JHeaderPanel jHeaderPanel=new JHeaderPanel(new JLabel(java.time.LocalDate.now().toString()),new JLabel("GUIDDIR MEBROUK"));
