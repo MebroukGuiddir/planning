@@ -1,12 +1,13 @@
 package fr.univ.tln.projet.planning.ihm.vue;
-
+/**
+ * @autor GUIDDIR MEBROUL
+ * @since 1.0
+ */
 import fr.univ.tln.projet.planning.controler.AbstractControler;
-
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.ihm.vue.event.JFrameComponentListener;
 import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
-
 import java.awt.*;
 import java.util.regex.Pattern;
 import javax.swing.*;

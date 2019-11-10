@@ -9,6 +9,7 @@ import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 
 public class JdatePickerAdapter extends JPanel {
@@ -22,21 +23,27 @@ public class JdatePickerAdapter extends JPanel {
         this.label.setSize(100, 20);
         this.label.setPreferredSize(new Dimension(100, 20));
         UtilDateModel model = new UtilDateModel();
-        model.setDate(20,04,2000);
+        model.setDate(1997,04,20);
         Properties properties  = new Properties();
-        properties.put("text.today", "Today");
+        properties.put("text.day", "Day");
         properties.put("text.month", "Month");
         properties.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model,properties);
         jDatePicker = new JDatePickerImpl(datePanel,new DateLabelFormatter());
         this.add(jDatePicker);
     }
-    public String getDate(){
-      return   this.jDatePicker.getModel().getValue().toString();
+    public Date getDate() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        String dateInString =this.jDatePicker.getModel().getValue().toString();
+        //Date date = format.parse(dateInString);
+        Date date=new Date();
+        System.out.println(date);
+        return  date;
+
     }
     public class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
 
-        private String datePattern = "yyyy-MM-dd";
+        private String datePattern = "dd-MM-yyyy";
         private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 
         @Override
@@ -45,7 +52,7 @@ public class JdatePickerAdapter extends JPanel {
         }
 
         @Override
-        public String valueToString(Object value) throws ParseException {
+        public String valueToString(Object value)   {
             if (value != null) {
                 Calendar cal = (Calendar) value;
                 return dateFormatter.format(cal.getTime());

@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 @SuperBuilder
@@ -21,11 +22,11 @@ public abstract class Utilisateurs {
     protected String username;
     protected String password;
     protected String email;
-    protected String dateNaissance;
+    protected Date dateNaissance;
     protected String adresse;
     protected String mobile;
     protected String genre;
-    protected final LocalDateTime dateCreation  ;
+    protected final Date dateCreation  ;
 
     public void setNom(String nom) throws DaoException {
         this.nom = nom;
@@ -47,7 +48,7 @@ public abstract class Utilisateurs {
         this.email = email;
     }
 
-    public void setDateNaissance(String dateNaissance) throws DaoException {
+    public void setDateNaissance(Date dateNaissance) throws DaoException {
         this.dateNaissance = dateNaissance;
     }
     public void setAdresse(String adresse) throws DaoException {

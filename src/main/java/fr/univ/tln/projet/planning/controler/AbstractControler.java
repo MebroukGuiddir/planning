@@ -1,7 +1,9 @@
 package fr.univ.tln.projet.planning.controler;
 
+import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 
+import java.util.Date;
 import java.util.logging.Logger;
 
 public abstract class AbstractControler {
@@ -12,7 +14,7 @@ public abstract class AbstractControler {
 
     }
     abstract void control();
-    public boolean controlerAddUser(String nom,String prenom,String email,String password,String username,String birthday,String genre,String adresse,String mobile,String status){
+    public boolean controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status) throws DaoException {
       logger.info(status);
       switch (status){
           case "Etudiant":adminModele.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);break;

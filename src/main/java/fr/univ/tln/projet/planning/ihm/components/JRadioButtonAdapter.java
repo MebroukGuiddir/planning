@@ -2,6 +2,7 @@ package fr.univ.tln.projet.planning.ihm.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Enumeration;
 import java.util.List;
 
     public class JRadioButtonAdapter extends JPanel {
@@ -34,6 +35,13 @@ import java.util.List;
         return this;
     }
     public String getSelected(){
-        return gengp.getSelection().toString();
+        for (Enumeration<AbstractButton> buttons = gengp.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+        return "";
     }
 }

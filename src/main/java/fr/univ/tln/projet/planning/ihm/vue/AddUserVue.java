@@ -1,13 +1,17 @@
 package fr.univ.tln.projet.planning.ihm.vue;
-
+/**
+ * @autor GUIDDIR MEBROUL
+ * @since 1.0
+ */
 
 import fr.univ.tln.projet.planning.controler.AbstractControler;
+import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.ihm.components.*;
 import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import org.apache.commons.lang3.RandomStringUtils;
-
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
 import java.util.regex.Pattern;
 
 public class AddUserVue extends JPanelAdapter {
@@ -24,7 +28,6 @@ public class AddUserVue extends JPanelAdapter {
     private JTextFieldAdapter mobile;
     private JRadioButtonAdapter genre;
     private JdatePickerAdapter dateNaissance ;
-
     private JButtonAdapter generate ;
     private JButton submit;
     private JButton reset;
@@ -94,7 +97,7 @@ public class AddUserVue extends JPanelAdapter {
              String statusText;
             if(status.getSelectedItem().equals("Responsable")|| status.getSelectedItem().equals("Enseignant") )
                 statusText="ens";
-            else if(status.getSelectedItem().equals("Etudaiant"))
+            else if(status.getSelectedItem().equals("Etudiant"))
                 statusText="etud";
             else statusText="admin";
           if(lastName.getText().length()!=0 && firstName.getText().length()!=0)  email.setText(lastName.getText()+firstName.getText()+"@"+statusText+".univ-tln.fr");
@@ -110,15 +113,14 @@ public class AddUserVue extends JPanelAdapter {
         addComponentWithPanel(dateNaissance,panelForm);
 
 
-
-
-
-
-
-
         submit = new JButtonAdapter("Submit");
 
         submit.addActionListener(e -> {
+            try {
+                System.out.println(dateNaissance.getDate());
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
             boolean error=false;
          if(!check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText()) ){firstName.showError();error=true;}
          else firstName.hideError();
@@ -126,7 +128,7 @@ public class AddUserVue extends JPanelAdapter {
          else lastName.hideError();
          if(!check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText())){email.showError();error=true;}
          else email.hideError();
-         if(!check("[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+",address.getText())){address.showError();error=true;}
+         if(!check("^[0-9]{1,3}[a-zA-Z ]+,[0-9]{5}[a-zA-Z ]+$",address.getText())){address.showError();error=true;}
          else address.hideError();
          if(!check("^0[0-9]{9}$",mobile.getText())){mobile.showError();error=true;}
          else mobile.hideError();
@@ -134,7 +136,13 @@ public class AddUserVue extends JPanelAdapter {
          else username.hideError();
          if(check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword())){ password.showError();error=true;}
          else password.hideError();
-          if(!error) adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
+          if(!error) {
+              try {
+                  adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
+              } catch (ParseException | DaoException ex) {
+                  ex.printStackTrace();
+              }
+          }
 
         });
         addComponentWithPanel(submit,panelBottom);

@@ -5,7 +5,7 @@ import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-
+import java.util.Date;
 
 
 @SuperBuilder
@@ -39,7 +39,7 @@ public class Etudiant extends Utilisateurs {
         dao.mettreAJour(this);
     }
 
-    public void setDateNaissance(String dateNaissance) throws DaoException {
+    public void setDateNaissance(Date dateNaissance) throws DaoException {
        super.setDateNaissance(dateNaissance);
         dao.mettreAJour(this);
     }

@@ -1,5 +1,8 @@
 package fr.univ.tln.projet.planning.ihm.vue;
-
+/**
+ * @autor GUIDDIR MEBROUL
+ * @since 1.0
+ */
 import javax.swing.*;
 import java.awt.*;
 
