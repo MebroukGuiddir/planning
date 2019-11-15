@@ -3,7 +3,11 @@ package fr.univ.tln.projet.planning.controler;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 
+import fr.univ.tln.projet.planning.modele.Utilisateur;
+import org.json.simple.JSONObject;
+
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 public abstract class AbstractControler {
@@ -14,16 +18,27 @@ public abstract class AbstractControler {
 
     }
     abstract void control();
-    public boolean controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status) throws DaoException {
+    public JSONObject controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status) throws DaoException {
       logger.info(status);
       switch (status){
-          case "Etudiant":adminModele.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);break;
-          case "Enseignant":adminModele.addEnseignant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);break;
-          case "Responsable":adminModele.addResponsable(nom,prenom,email, password,username, birthday,genre,adresse,mobile);break;
-          case "Admin":adminModele.addAdmin(nom,prenom,email, password,username, birthday,genre,adresse,mobile);break;
-          default:return false;
+          case "Etudiant": return adminModele.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Enseignant":return adminModele.addEnseignant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Responsable":return adminModele.addResponsable(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Admin":return adminModele.addAdmin(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          default: {JSONObject message=new JSONObject();
+                    message.put("status","Internal Server Error ");
+                    message.put("message", "Internal Server Error ");
+                    message.put("code", 500 );
+              return message;
+          }
+
       }
-      return true;
+
+    }
+    public List<Utilisateur> selectEtudiants(String motif){
+        List<Utilisateur> list = adminModele.selectEtudiants(motif);
+        logger.info("list etudiants :"+list.toString());
+        return list;
     }
 
     public boolean controlerLogin(String username ,String Password){

@@ -10,8 +10,9 @@ import java.util.Date;
 
 @SuperBuilder
 @Getter
-public class Etudiant extends Utilisateurs {
+public class Etudiant extends Utilisateur {
     private static EtudiantDao dao;
+    private int id_etudiant;
     public static void setDao(EtudiantDao dao) {
         Etudiant.dao=dao;
     }

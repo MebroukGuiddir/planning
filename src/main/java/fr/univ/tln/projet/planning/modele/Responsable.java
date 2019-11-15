@@ -5,10 +5,13 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@Setter
+
 @SuperBuilder
 @Getter
 @ToString
 public class Responsable extends Enseignant {
+    public String toString() {
+        return "Responsable [login=" + username + ", prenom=" + prenom + ", nom=" + nom + "]";
+    }
 
 }

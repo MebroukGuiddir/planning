@@ -1,22 +1,20 @@
 package fr.univ.tln.projet.planning.modele;
 
+import fr.univ.tln.projet.planning.dao.UtilisateurDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
 @SuperBuilder
 @Getter
 @ToString
-public abstract class Utilisateurs {
+public class Utilisateur {
 
+    protected int id_user;
     protected String nom;
     protected String prenom;
     protected String username;
@@ -27,7 +25,11 @@ public abstract class Utilisateurs {
     protected String mobile;
     protected String genre;
     protected final Date dateCreation  ;
+    private static UtilisateurDao dao;
 
+    public static void setDao(UtilisateurDao dao) {
+        Utilisateur.dao=dao;
+    }
     public void setNom(String nom) throws DaoException {
         this.nom = nom;
     }

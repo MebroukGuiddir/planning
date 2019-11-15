@@ -1,11 +1,13 @@
 package fr.univ.tln.projet.planning.dao;
 
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
-import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuException;
+import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
+import lombok.Getter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 /**
  * class qui contient des méthodes générales
@@ -15,12 +17,19 @@ import java.sql.Statement;
  */
 public abstract class Dao<E>{
     private DB bd;
+    @Getter
+    protected static Logger logger ;
     public Dao(DB bd) {
         this.bd=bd;
+        logger= Logger.getLogger(Dao.class.getName());
+    }
+    protected DB getDb()   {
+        return this.bd;
     }
     protected Connection getConnection() throws SQLException {
         return this.bd.getConnection();
     }
+
     /**
      * teste si une table existe dans la base de données
      * @param nomTable
@@ -50,7 +59,7 @@ public abstract class Dao<E>{
             trouver(username);
             return true;
         }
-        catch (ObjetInconnuException exp) {
+        catch (ObjetInconnuDaoException exp) {
             return false;
         }
     }

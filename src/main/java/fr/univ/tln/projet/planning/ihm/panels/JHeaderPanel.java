@@ -1,16 +1,15 @@
-package fr.univ.tln.projet.planning.ihm.vue;
+package fr.univ.tln.projet.planning.ihm.panels;
 /**
  * @autor GUIDDIR MEBROUL
  * @since 1.0
  */
-import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import javax.swing.*;
 import java.awt.*;
 
-public class JHeaderPanel extends JPanelAdapter {
+public class JHeaderPanel extends JPanel {
 
     public JHeaderPanel(JLabel date,JLabel user){
-        super(TypePanel.HEADER);
+        super();
         this.setLayout(new BorderLayout( 20, 20));
         this.setAlignmentY(FlowLayout.CENTER);
         this.setAlignmentX(FlowLayout.CENTER);

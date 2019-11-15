@@ -33,11 +33,17 @@ public class JTextFieldAdapter extends JPanel {
           this.add(textField,BorderLayout.EAST);
           this.add(errorLabel,BorderLayout.SOUTH);
       }
-      public void showError(){
-          this.errorLabel.setVisible(true);
+      public JTextFieldAdapter setError(String error){
+          this.errorLabel.setText(error);
+          return this;
       }
-      public void hideError(){
+      public boolean showError(){
+          this.errorLabel.setVisible(true);
+          return true;
+      }
+      public boolean hideError(){
           this.errorLabel.setVisible(false);
+          return false;
       }
       public String getText(){
           return this.textField.getText();

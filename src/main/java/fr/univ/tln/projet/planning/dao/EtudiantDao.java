@@ -1,14 +1,18 @@
 package fr.univ.tln.projet.planning.dao;
 
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
-import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuException;
+import fr.univ.tln.projet.planning.exception.dao.InsertDaoException;
+import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
 import fr.univ.tln.projet.planning.modele.Etudiant;
+import fr.univ.tln.projet.planning.modele.Utilisateur;
 
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class EtudiantDao extends Dao<Etudiant> {
+
+public class EtudiantDao extends UtilisateurDao <Etudiant > {
 
     /**
      * Le constructeur crée la table si nécessair
@@ -19,16 +23,9 @@ public class EtudiantDao extends Dao<Etudiant> {
             try (Connection connection = this.getConnection();
                  Statement statement = connection.createStatement( )) {
                 statement.executeUpdate("CREATE TABLE etudiant " +
-                        "(email VARCHAR(50) PRIMARY KEY," +
-                        "username VARCHAR(50)," +
-                        "password VARCHAR(50)," +
-                        "nom VARCHAR(50)," +
-                        "prenom VARCHAR(50)," +
-                        "adresse VARCHAR(50)," +
-                        "mobile VARCHAR(15)," +
-                        "genre VARCHAR(6)," +
-                        "dateNaissance DATE ," +
-                        "dateCreation Date)");
+                        "(id_etudiant  SERIAL  PRIMARY KEY," +
+                        "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user))");
+
             }
             catch (SQLException exp) {throw new DaoException(exp);}
         }
@@ -36,92 +33,110 @@ public class EtudiantDao extends Dao<Etudiant> {
 
     /**
      * Création d'un Etudiant en base de données
-     * @param username
-     * @param nom
-     * @param prenom
+     * @param email
+
      * @return
      * @throws DaoException
      */
     public Etudiant creer(String email, String username, String password, String nom, String prenom, String adresse, String mobile, Date dateNaissance, String genre)throws DaoException{
+        UtilisateurDao dao = new UtilisateurDao(this.getDb());
 
-        if (isExisteDansLaBase(username))
-            throw new DaoException("Etudiant déjà existant: "+username);
-        else {
+       Utilisateur utilisateur= dao.creer(email,username,password,nom,prenom,adresse,mobile,dateNaissance,genre);
 
             try (Connection connection = this.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO etudiant (email,username,password,nom,prenom,adresse,mobile,dateNaissance,genre,dateCreation) VALUES (?,?,?,?,?,?,?,?,?,?)" )){
-                statement.setString(1, email);
-                statement.setString(2, username);
-                statement.setString(3, password);
-                statement.setString(4, nom);
-                statement.setString(5, prenom);
-                statement.setString(6, adresse);
-                statement.setString(7, mobile);
-                statement.setDate(8, new java.sql.Date(dateNaissance.getTime()) );
-                statement.setString(9, genre);
-                statement.setDate(10, new java.sql.Date( new Date().getTime()));
-                System.out.println(statement);
+                         "INSERT INTO etudiant (id_user) VALUES (?)",Statement.RETURN_GENERATED_KEYS )){
+                statement.setInt(1, utilisateur.getId_user());
                 statement.executeUpdate();
-
+                ResultSet rs = statement.getGeneratedKeys();
+                if (rs.next()) {
+                    return trouver(rs.getInt(1));
+                }else throw new InsertDaoException("insert exception");
             }
             catch (SQLException exp) {throw new DaoException(exp);}
-            return trouver(username);
-        }
+
     }
-    @Override
-    public Etudiant trouver(String username) throws DaoException{
+    public List<Utilisateur> selectionner(String motif) throws DaoException
+    { List<Utilisateur> listEtudiant=new ArrayList ();
+        motif=motif.replace("!", "!!")
+                .replace("%", "!%")
+                .replace("_", "!_")
+                .replace("[", "![");
+         try (Connection connection = this.getConnection();
+
+              PreparedStatement statement =
+                      connection.prepareStatement("SELECT * FROM etudiant e JOIN utilisateur u ON e.id_user=u.id_user WHERE  ( nom LIKE ? ESCAPE '!' OR  prenom LIKE ? ESCAPE '!') ")){
+        statement.setString(1, "%" + motif + "%");
+        statement.setString(2, "%" + motif + "%");
+        ResultSet rs= statement.executeQuery( );
+
+        if (!rs.next( ))
+             return listEtudiant;
+
+            while (rs.next()) {
+                listEtudiant.add(
+                        Etudiant.builder()
+                        .username(rs.getString("username"))
+                        .email(rs.getString("email"))
+                        .nom(rs.getString("nom"))
+                        .prenom(rs.getString("prenom"))
+                        .build()
+                );
+
+            }
+         return listEtudiant;
+
+    }
+    catch (SQLException exp) {throw new DaoException(exp);}
+
+    }
+
+
+    public   Etudiant trouver(int id_user ) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM etudiant WHERE username=?")){
-            statement.setString(1,username);
+                     connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE e.id_user=u.id_user")){
+
             ResultSet rs= statement.executeQuery( );
+
             if (!rs.next( ))
-                throw new ObjetInconnuException("Fiche inexistante : "+username);
+             throw new ObjetInconnuDaoException("Etudiant inexistante id_user: "+id_user);
+
             else return Etudiant.builder()
-                    .email(rs.getString(1))
-                    .username(rs.getString(2))
-                    .password(rs.getString(3))
-                    .nom(rs.getString(4))
-                    .prenom(rs.getString(5))
-                    .adresse(rs.getString(6))
-                    .mobile(rs.getString(7))
-                    .dateNaissance(rs.getDate(8))
-                    .genre(rs.getString(9))
-                    .dateCreation( rs.getDate(10))
+                    .id_etudiant(rs.getInt("id_etudiant"))
+                    .id_user(rs.getInt("id_user"))
                     .build();
 
         }
         catch (SQLException exp) {throw new DaoException(exp);}
     }
-
     /**
      * Mettre à jour un Etudiant dans la base
      * @param etudiant
      * @throws DaoException
      */
-    public void mettreAJour(Etudiant etudiant) throws DaoException{
+    /*public void mettreAJour(Etudiant etudiant) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE etudiant SET nom=? ,prenom=? WHERE username=?")){
+                     "UPDATE etudiant SET =? ,=? WHERE id_etudiant=?")){
             statement.setString(1,etudiant.getNom());
             statement.setString(2, etudiant.getPrenom());
             statement.setString(3, etudiant.getUsername());
             statement.executeUpdate();
         }
         catch (SQLException exp) {throw new DaoException(exp);}
-    }
+    }*/
 
     /**
      * suppression d'un Etudiant en base
-     * @param etudiant
+     * @param id_user
      * @throws DaoException
      */
-    public void supprimer(Etudiant etudiant) throws DaoException{
+    public void supprimer(int id_user) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "DELETE FROM etudiant WHERE username=?")) {
-            statement.setString(1, etudiant.getUsername());
+                     "DELETE FROM etudiant WHERE id_user=?")) {
+            statement.setInt(1, id_user);
             statement.executeUpdate();
         }
         catch (SQLException exp) {throw new DaoException(exp);}

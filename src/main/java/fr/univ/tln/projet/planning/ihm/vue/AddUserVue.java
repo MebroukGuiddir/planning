@@ -7,14 +7,15 @@ package fr.univ.tln.projet.planning.ihm.vue;
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.ihm.components.*;
-import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.json.simple.JSONObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.text.ParseException;
 import java.util.regex.Pattern;
 
-public class AddUserVue extends JPanelAdapter {
+public class AddUserVue extends JPanel  {
     // Components of the Form
 
     private AbstractControler adminControler;
@@ -36,8 +37,8 @@ public class AddUserVue extends JPanelAdapter {
 
     // constructor, to initialize the components
     // with default values.
-    public AddUserVue(TypePanel typePanel, AbstractControler controler)
-    {    super(typePanel);
+    public AddUserVue(  AbstractControler controler)
+    {    super( );
         adminControler=controler;
         //principal layout
         BorderLayout borderLayout=new BorderLayout();
@@ -116,30 +117,47 @@ public class AddUserVue extends JPanelAdapter {
         submit = new JButtonAdapter("Submit");
 
         submit.addActionListener(e -> {
-            try {
-                System.out.println(dateNaissance.getDate());
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
+
             boolean error=false;
-         if(!check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText()) ){firstName.showError();error=true;}
+         if(firstName.getText().length()==0 && firstName.setError("*ce champs est obligatoire").showError() ||
+            !check( "^[a-zA-Z][a-zA-Z ]*$",firstName.getText()) && firstName.setError("*veuillez respecter le format").showError() ){error=true;}
          else firstName.hideError();
-         if(!check( "^[a-zA-Z][a-zA-Z ]*$",lastName.getText())){lastName.showError();error=true;}
+
+         if(lastName.getText().length()==0 && lastName.setError("*ce champs est obligatoire").showError() ||
+                 !check( "^[a-zA-Z][a-zA-Z ]*$",lastName.getText()) && lastName.setError("*veuillez respecter le format").showError()){error=true;}
          else lastName.hideError();
-         if(!check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText())){email.showError();error=true;}
+
+         if(  email.getText().length()==0 && email.setError("*ce champs est obligatoire").showError()||
+                 !check( "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",email.getText()) && email.setError("*veuillez respecter le format").showError()){error=true;}
          else email.hideError();
-         if(!check("^[0-9]{1,3}[a-zA-Z ]+,[0-9]{5}[a-zA-Z ]+$",address.getText())){address.showError();error=true;}
+
+         if(address.getText().length()==0 && address.setError("*ce champs est obligatoire").showError() ||
+                 !check("^[0-9]{1,3}[a-zA-Z ]+,[0-9]{5}[a-zA-Z ]+$",address.getText()) && address.setError("veuillez respecter le format").showError()){error=true;}
          else address.hideError();
-         if(!check("^0[0-9]{9}$",mobile.getText())){mobile.showError();error=true;}
+
+         if(mobile.getText().length()==0 && mobile.setError("*ce champs est obligatoire").showError() ||
+                 !check("^0[0-9]{9}$",mobile.getText()) && mobile.setError("veuillez respecter le format").showError()){error=true;}
          else mobile.hideError();
-         if(!check( "^[a-zA-Z0-9]{5,}$",username.getText()))   username.showError();
+
+         if(username.getText().length() ==0 && username.setError("*ce champs est obligatoire").showError()||
+                 !check( "^[a-zA-Z0-9]{5,}$",username.getText()) && username.setError("veuillez respecter le format").showError() )  {error=true;}
          else username.hideError();
-         if(check("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",password.getPassword())){ password.showError();error=true;}
+         if(!check("^.{6,}$",password.getPassword()) && password.setError("*au moins six caractéres").showError()){error=true;}
          else password.hideError();
           if(!error) {
               try {
-                  adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
-              } catch (ParseException | DaoException ex) {
+                  JSONObject response=adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
+                 switch ((int)response.get("code")){
+                     case 201:
+                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.INFORMATION_MESSAGE);
+                         firstName.setText("");lastName.setText("");address.setText("");email.setText("");password.setText("");username.setText("");mobile.setText("");break;
+                     case 409:
+                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
+                     case 500:
+                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
+                 }
+
+              } catch (DaoException ex) {
                   ex.printStackTrace();
               }
           }

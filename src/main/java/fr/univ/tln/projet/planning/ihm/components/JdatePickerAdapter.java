@@ -23,23 +23,21 @@ public class JdatePickerAdapter extends JPanel {
         this.label.setSize(100, 20);
         this.label.setPreferredSize(new Dimension(100, 20));
         UtilDateModel model = new UtilDateModel();
-        model.setDate(1997,04,20);
+        model.setDate(1997,11,6);
+        model.setSelected(true);
         Properties properties  = new Properties();
         properties.put("text.day", "Day");
         properties.put("text.month", "Month");
         properties.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model,properties);
         jDatePicker = new JDatePickerImpl(datePanel,new DateLabelFormatter());
+        this.add(this.label);
         this.add(jDatePicker);
     }
-    public Date getDate() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        String dateInString =this.jDatePicker.getModel().getValue().toString();
-        //Date date = format.parse(dateInString);
-        Date date=new Date();
-        System.out.println(date);
-        return  date;
-
+    public Date getDate(){
+        Date selectedValue =(Date)  this.jDatePicker.getModel().getValue();
+        System.out.println(selectedValue);
+        return  selectedValue;
     }
     public class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
 

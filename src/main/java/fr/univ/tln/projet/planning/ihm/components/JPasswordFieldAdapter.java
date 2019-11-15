@@ -33,11 +33,17 @@ public class JPasswordFieldAdapter extends JPanel {
         this.add(passwordField,BorderLayout.EAST);
         this.add(errorLabel,BorderLayout.SOUTH);
     }
-    public void showError(){
-        this.errorLabel.setVisible(true);
+    public JPasswordFieldAdapter setError(String error){
+        this.errorLabel.setText(error);
+        return this;
     }
-    public void hideError(){
+    public boolean showError(){
+        this.errorLabel.setVisible(true);
+        return true;
+    }
+    public boolean hideError(){
         this.errorLabel.setVisible(false);
+        return false;
     }
     public String getPassword(){
         return String.valueOf(this.passwordField.getPassword());

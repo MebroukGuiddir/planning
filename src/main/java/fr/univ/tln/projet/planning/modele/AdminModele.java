@@ -3,10 +3,13 @@ package fr.univ.tln.projet.planning.modele;
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.dao.DB;
 import fr.univ.tln.projet.planning.dao.EtudiantDao;
+import fr.univ.tln.projet.planning.dao.UtilisateurDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
+import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import fr.univ.tln.projet.planning.modele.observer.Observable;
 import lombok.Getter;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,7 +27,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     private List<Responsable> responsables = new ArrayList();
     private List<Admin> admins = new ArrayList();
     DB bd = new DB("Bd.properties");
-    EtudiantDao dao = new EtudiantDao(bd);
+
 
     public AdminModele() throws IOException, ClassNotFoundException, DaoException {
     }
@@ -37,15 +40,44 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
      * @return
      */
     @Override
-    public boolean addEtudiant(String nom,String prenom,String email,String password,String username,Date birthday,String genre,String adresse,String mobile) throws DaoException {
-        EtudiantDao dao = new EtudiantDao(bd);
-        Etudiant.setDao(dao);
-        if(dao.isExisteDansLaBase(username))return false;
-        Etudiant etudiant=dao.creer(email,username,password,nom,prenom,adresse,mobile,birthday,genre);
-        etudiants.add(etudiant);
-        logger.info("new 'Etudiant' was added :"+etudiant);
-        notifyObserver(etudiants, Changement.builder().type(Changement.Type.ADD).section(Changement.Section.ETUDIANT).build() );
-        return true;
+    public JSONObject addEtudiant(String nom,String prenom,String email,String password,String username,Date birthday,String genre,String adresse,String mobile) throws DaoException {
+        JSONObject message = new JSONObject();
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+            Etudiant etudiant = dao.creer(email, username, password, nom, prenom, adresse, mobile, birthday, genre);
+            etudiants.add(etudiant);
+            logger.info("new 'Etudiant' was added :" + etudiant);
+            notifyObserver(etudiants, Changement.builder().type(Changement.Type.ADD).section(Changement.Section.ETUDIANT).build());
+
+            message.put("status","created");
+            message.put("message", "user created");
+            message.put("code", 201);
+            return message;
+        } catch (ObjectExistDaoException exception){
+            message.put("status","Conflict");
+            message.put("message", "user aleardy  exist");
+            message.put("code", 409);
+            return message;
+        }
+        catch (DaoException exception){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+    }
+
+    @Override
+    public List <Utilisateur>selectEtudiants(String motif) {
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+           return dao.selectionner(motif);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -55,24 +87,30 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
 
 
     @Override
-    public boolean addEnseignant(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
+    public JSONObject addEnseignant(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
      //   enseignants.add(Enseignant.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
-        return false;
+        JSONObject message = new JSONObject();
+        return  message;
     }
 
     @Override
     public boolean deleteEnseignant( String email) {
-        return false;
+
+
+       return true;
     }
 
 
 
     @Override
-    public boolean addResponsable(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
+    public JSONObject addResponsable(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
       //  responsables.add(Responsable.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
-        return false;
+
+
+        JSONObject message = new JSONObject();
+        return  message;
     }
 
     @Override
@@ -86,10 +124,13 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     }
 
     @Override
-    public boolean addAdmin(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
+    public JSONObject addAdmin(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
         //admins.add(Admin.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
-        return false;
+
+
+        JSONObject message = new JSONObject();
+        return  message;
 
     }
 

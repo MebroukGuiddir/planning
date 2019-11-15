@@ -1,17 +1,16 @@
-package fr.univ.tln.projet.planning.ihm.vue;
+package fr.univ.tln.projet.planning.ihm.panels;
 /**
  * @autor GUIDDIR MEBROUL
  * @since 1.0
  */
-import fr.univ.tln.projet.planning.ihm.vue.event.JPanelAdapter;
 import javax.swing.*;
 import java.awt.*;
 
-public class JFooter extends JPanelAdapter {
+public class JFooter extends JPanel {
     JLabel footerLabel ;
     JLabel footerDate ;
     public JFooter(){
-        super(TypePanel.FOOTER);
+        super();
          footerLabel = new JLabel("Univeristé Toulon - UFR Sciences et Techniques  ");
 
         this.setLayout(new BorderLayout(2,0));

@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @ToString
-public class Admin extends Utilisateurs  {
+public class Admin extends Utilisateur {
 
 
 }

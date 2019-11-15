@@ -20,20 +20,7 @@ import java.sql.SQLException;
 public class App 
 {
     public static void main( String[] args )
-    {   try { DB db = new DB("Bd.properties");
-       Connection connection=  db.getConnection();
-        System.out.println("Connexion réalisée !");
-        connection.close( ); }
-    catch (SQLException e){
-        System.out.println("Connexion non effectuée !");
-        e.printStackTrace( ); }
-    catch (ClassNotFoundException e){
-        System.out.println("Vérifier que la classe du driver est dans le classpath");
-        e.printStackTrace( );} catch (IOException e) {
-        e.printStackTrace();
-    }
-
-
+    {
         javax.swing.SwingUtilities.invokeLater(() -> {
         //creer le modéle
             AdminModele adminModele = null;
