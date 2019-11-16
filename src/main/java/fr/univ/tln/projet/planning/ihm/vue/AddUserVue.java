@@ -145,21 +145,17 @@ public class AddUserVue extends JPanel  {
          if(!check("^.{6,}$",password.getPassword()) && password.setError("*au moins six caractéres").showError()){error=true;}
          else password.hideError();
           if(!error) {
-              try {
-                  JSONObject response=adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
-                 switch ((int)response.get("code")){
-                     case 201:
-                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.INFORMATION_MESSAGE);
-                         firstName.setText("");lastName.setText("");address.setText("");email.setText("");password.setText("");username.setText("");mobile.setText("");break;
-                     case 409:
-                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
-                     case 500:
-                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
-                 }
-
-              } catch (DaoException ex) {
-                  ex.printStackTrace();
+              JSONObject response=adminControler.controlerAddUser(firstName.getText(),lastName.getText(),email.getText(), password.getPassword(),username.getText(),dateNaissance.getDate(),genre.getSelected(),address.getText(),mobile.getText(),status.getSelectedItem());
+              switch ((int)response.get("code")){
+                  case 201:
+                      JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.INFORMATION_MESSAGE);
+                      firstName.setText("");lastName.setText("");address.setText("");email.setText("");password.setText("");username.setText("");mobile.setText("");break;
+                  case 409:
+                      JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
+                  case 500:
+                      JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
               }
+
           }
 
         });

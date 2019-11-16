@@ -18,7 +18,7 @@ public abstract class AbstractControler {
 
     }
     abstract void control();
-    public JSONObject controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status) throws DaoException {
+    public JSONObject controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status)   {
       logger.info(status);
       switch (status){
           case "Etudiant": return adminModele.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
@@ -45,5 +45,14 @@ public abstract class AbstractControler {
 
          return adminModele.UserLogin(username ,Password);
 
+    }
+
+    /**
+     * Supprimer un utilisateur
+     * @param username
+     */
+    public JSONObject deleteUser(String username){
+        logger.info("Controler/delete User:"+username);
+        return adminModele.deleteUser(username);
     }
 }

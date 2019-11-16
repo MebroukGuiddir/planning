@@ -40,7 +40,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
      * @return
      */
     @Override
-    public JSONObject addEtudiant(String nom,String prenom,String email,String password,String username,Date birthday,String genre,String adresse,String mobile) throws DaoException {
+    public JSONObject addEtudiant(String nom,String prenom,String email,String password,String username,Date birthday,String genre,String adresse,String mobile)   {
         JSONObject message = new JSONObject();
         try {
             EtudiantDao dao = new EtudiantDao(bd);
@@ -80,10 +80,6 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return null;
     }
 
-    @Override
-    public boolean deleteEtudiant(String email) {
-        return false;
-    }
 
 
     @Override
@@ -94,12 +90,6 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return  message;
     }
 
-    @Override
-    public boolean deleteEnseignant( String email) {
-
-
-       return true;
-    }
 
 
 
@@ -157,8 +147,27 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return false;
     }
 
+    @Override
+    public JSONObject deleteUser(String username) {
+        JSONObject message = new JSONObject();
+        logger.info("Modele/delete User:"+username);
+        try {
+            UtilisateurDao dao = new UtilisateurDao(bd);
+            Utilisateur.setDao(dao);
+            dao.supprimer(username);
+            message.put("status", "Success");
+            message.put("message", "user deleted");
+            message.put("code", 200);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
 
-    //Implémentation du pattern observer
+        //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);
     }

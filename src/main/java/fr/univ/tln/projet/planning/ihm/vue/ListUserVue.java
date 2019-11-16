@@ -5,6 +5,7 @@ import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.ihm.components.SearchBox;
 import fr.univ.tln.projet.planning.modele.Utilisateur;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
+import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -27,14 +28,24 @@ public class ListUserVue extends JPanel implements Observer {
         SearchBox recherche =new SearchBox();
         jHeader.add(status);
         jHeader.add(recherche);
+        recherche.getSearchB().addActionListener(actionEvent -> {
+            modele.updateModel(  this.controler.selectEtudiants(recherche.getSearchable().getText()));
+        });
         JPanel boutons = new JPanel();
         JButton supprimer=new JButton("Supprimer");
         supprimer.addActionListener((actionEvent) -> {
             int[] selection = list.getSelectedRows();
-
-            for(int i = selection.length - 1; i >= 0; i--){
-                modele.removeUtilisateur(selection[i]);
+            JSONObject response=this.controler.deleteUser(modele.getValueAt(selection[0],3).toString());
+            switch ((int)response.get("code")){
+                case 200:
+                    JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.INFORMATION_MESSAGE);
+                    for(int i = selection.length - 1; i >= 0; i--){
+                        modele.removeUtilisateur(selection[i]);
+                    }break;
+                case 500:
+                    JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
             }
+
         });
         JButton rafraichir=new JButton("rafraîchir");
         rafraichir.addActionListener((actionEvent) -> {
@@ -61,7 +72,7 @@ public class ListUserVue extends JPanel implements Observer {
 
     public class ModeleDynamiqueObjet extends AbstractTableModel {
         private final List<Utilisateur> utilisateurs = new ArrayList<Utilisateur>();
-        private final String[] entetes = {"Prénom", "Nom", "Email"};
+        private final String[] entetes = {"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"};
 
         public ModeleDynamiqueObjet() {
             super();
@@ -87,12 +98,18 @@ public class ListUserVue extends JPanel implements Observer {
                     return utilisateurs.get(rowIndex).getNom();
                 case 2:
                     return utilisateurs.get(rowIndex).getEmail();
+                case 3:
+                    return  utilisateurs.get(rowIndex).getUsername();
+                case 4:
+                    return utilisateurs.get(rowIndex).getAdresse();
+                case 5:
+                    return utilisateurs.get(rowIndex).getDateNaissance();
                 default:
                     return null; //Ne devrait jamais arriver
             }
         }
 
-        public void addUtilisateur(Utilisateur utilisateur) {
+        public void updateUtilisateur(Utilisateur utilisateur) {
             utilisateurs.add(utilisateur);
 
             fireTableRowsInserted(utilisateurs.size() -1, utilisateurs.size() -1);

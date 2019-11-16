@@ -164,16 +164,28 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
 
     /**
      * suppression d'un Utilisateur en base
-     * @param utilisateur
+     * @param  username
      * @throws DaoException
      */
-    public void supprimer(Utilisateur utilisateur) throws DaoException{
+    public void supprimer(String username) throws DaoException{
+        Utilisateur utilisateur=trouver(username);
+       // EtudiantDao dao = new EtudiantDao(this.getDb());
+      //  dao.supprimer(utilisateur.getId_user());
         try (Connection connection = this.getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "DELETE FROM utilisateur WHERE username=?")) {
-            statement.setString(1, utilisateur.getUsername());
+            statement.setString(1, username);
             statement.executeUpdate();
         }
         catch (SQLException exp) {throw new DaoException(exp);}
+    }
+    /**
+     * suppression d'un Utilisateur en base
+     * @param utilisateur
+     * @throws DaoException
+     */
+    public void supprimer(Utilisateur utilisateur) throws DaoException {
+
+        supprimer(utilisateur.getUsername());
     }
 }

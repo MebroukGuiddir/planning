@@ -24,7 +24,7 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
                  Statement statement = connection.createStatement( )) {
                 statement.executeUpdate("CREATE TABLE etudiant " +
                         "(id_etudiant  SERIAL  PRIMARY KEY," +
-                        "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user))");
+                        "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user) ON DELETE CASCADE)");
 
             }
             catch (SQLException exp) {throw new DaoException(exp);}
@@ -65,21 +65,20 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
          try (Connection connection = this.getConnection();
 
               PreparedStatement statement =
-                      connection.prepareStatement("SELECT * FROM etudiant e JOIN utilisateur u ON e.id_user=u.id_user WHERE  ( nom LIKE ? ESCAPE '!' OR  prenom LIKE ? ESCAPE '!') ")){
+                      connection.prepareStatement("SELECT * FROM etudiant e FULL JOIN utilisateur u ON e.id_user=u.id_user WHERE ( nom LIKE ?   OR  prenom LIKE ?  ) ")){
         statement.setString(1, "%" + motif + "%");
         statement.setString(2, "%" + motif + "%");
         ResultSet rs= statement.executeQuery( );
 
-        if (!rs.next( ))
-             return listEtudiant;
-
             while (rs.next()) {
                 listEtudiant.add(
                         Etudiant.builder()
-                        .username(rs.getString("username"))
-                        .email(rs.getString("email"))
-                        .nom(rs.getString("nom"))
-                        .prenom(rs.getString("prenom"))
+                                .nom(rs.getString("nom"))
+                                .prenom(rs.getString("prenom"))
+                                .email(rs.getString("email"))
+                                .username(rs.getString("username"))
+                                .dateNaissance(rs.getDate("dateNaissance"))
+                                .adresse(rs.getString("adresse"))
                         .build()
                 );
 

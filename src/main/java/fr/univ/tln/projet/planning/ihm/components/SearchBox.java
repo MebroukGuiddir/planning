@@ -1,8 +1,10 @@
 package fr.univ.tln.projet.planning.ihm.components;
+import lombok.Getter;
+
 import javax.swing.*;
 
 import java.awt.*;
-
+@Getter
 public class SearchBox extends JPanel {
     private JTextField searchable = new JTextField(30);
     private JButton searchB = new JButton("Search");
@@ -15,6 +17,7 @@ public class SearchBox extends JPanel {
         super();
         setSize(600, 600);
         addComponents();
+
 
     }
 
