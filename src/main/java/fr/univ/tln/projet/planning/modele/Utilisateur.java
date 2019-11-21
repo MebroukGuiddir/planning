@@ -14,7 +14,7 @@ import java.util.Date;
 @ToString
 public class Utilisateur {
 
-    protected int id_user;
+    protected int idUser;
     protected String nom;
     protected String prenom;
     protected String username;

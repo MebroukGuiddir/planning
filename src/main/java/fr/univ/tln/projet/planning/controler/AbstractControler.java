@@ -41,9 +41,14 @@ public abstract class AbstractControler {
         return list;
     }
 
-    public boolean controlerLogin(String username ,String Password){
+    public JSONObject  controlerLogin(String username ,String Password,String status){
+        switch (status){
+            case "Etudiant":return adminModele.etudiantLogin(username ,Password);
+            case "Admin":return  adminModele.adminLogin(username ,Password);
+            //TODO set return object
+            default:return new JSONObject();
+        }
 
-         return adminModele.UserLogin(username ,Password);
 
     }
 

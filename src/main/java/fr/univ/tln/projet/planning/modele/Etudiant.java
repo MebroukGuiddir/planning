@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 public class Etudiant extends Utilisateur {
     private static EtudiantDao dao;
-    private int id_etudiant;
+    private int idEtudiant;
     public static void setDao(EtudiantDao dao) {
         Etudiant.dao=dao;
     }

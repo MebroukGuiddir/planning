@@ -20,7 +20,9 @@ public class DB {
         }
         Class.forName(properties.getProperty("driver"));
     }
-    /** rend une connection à la base de données*/
+    /** rend une connection à la base de données
+     *
+     */
     public Connection getConnection( ) throws SQLException {
         return DriverManager.getConnection(
                 properties.getProperty("url"),

@@ -179,6 +179,12 @@ public class AddUserVue extends JPanel  {
 
     private void addComponentWithPanel(Component component,JPanel panel){
         JPanel subPanel= new JPanel();
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int width = gd.getDisplayMode().getWidth();
+        int height = gd.getDisplayMode().getHeight();
+        subPanel.setMinimumSize(new Dimension(width/3,height/10));
+        subPanel.setSize(new Dimension(width/3,height/10));
+        subPanel.setPreferredSize(new Dimension(width/3,height/10));
         subPanel.add(component);
         subPanel.setOpaque(false);
         panel.add(subPanel);

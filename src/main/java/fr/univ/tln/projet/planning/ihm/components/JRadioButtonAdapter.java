@@ -10,6 +10,7 @@ import java.util.List;
        private JLabel label;
     public  JRadioButtonAdapter(String title,String[] labels){
          super();
+
         gengp = new ButtonGroup();
         this.label = new JLabel(title);
         this.label.setFont(new Font("Arial", Font.BOLD, 12));
@@ -24,11 +25,14 @@ import java.util.List;
 
     }
     public JRadioButtonAdapter addRadioButton(String label){
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int width = gd.getDisplayMode().getWidth();
+        int height = gd.getDisplayMode().getHeight();
         JRadioButton jRadioButton =new JRadioButton(label);
         jRadioButton.setFont(new Font("Arial", Font.BOLD, 12));
         jRadioButton.setSelected(true);
-        jRadioButton.setSize(75, 20);
-        jRadioButton.setPreferredSize(new Dimension(75,20));
+        jRadioButton.setSize(width/10, height/18);
+        jRadioButton.setPreferredSize(new Dimension(width/10,height/18));
         jRadioButton.setOpaque(false);
         this.add(jRadioButton);
         this.gengp.add(jRadioButton);

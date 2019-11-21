@@ -36,7 +36,40 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
             catch (SQLException exp) {throw new DaoException(exp);}
         }
     }
+    /**
+     * trouver un utilisateur par username
+     * @param username
+     * @param password
+     * @return
+     * @throws DaoException
+     */
+    public   Utilisateur trouver(String username,String password) throws DaoException{
 
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM Utilisateur WHERE username=? AND password=?")){
+            statement.setString(1,username);
+            statement.setString(2,password);
+            ResultSet rs= statement.executeQuery( );
+            if (!rs.next( ))
+                throw new ObjetInconnuDaoException("Utlisateur inexistant : "+username);
+
+            else return  Utilisateur.builder()
+                    .idUser(rs.getInt("id_user"))
+                    .email(rs.getString("email"))
+                    .username(rs.getString("username"))
+                    .password(rs.getString("password"))
+                    .nom(rs.getString("nom"))
+                    .prenom(rs.getString("prenom"))
+                    .adresse(rs.getString("adresse"))
+                    .mobile(rs.getString("mobile"))
+                    .dateNaissance(rs.getDate("dateNaissance"))
+                    .genre(rs.getString("genre"))
+                    .dateCreation( rs.getDate("dateCreation"))
+                    .build();
+        }
+        catch (SQLException exp) {throw new DaoException(exp);}
+    }
     /**
      * trouver un utilisateur par username
      * @param username
@@ -54,7 +87,7 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
             if (!rs.next( ))
                 throw new ObjetInconnuDaoException("Utlisateur inexistant : "+username);
             else return  Utilisateur.builder()
-                     .id_user(rs.getInt("id_user"))
+                     .idUser(rs.getInt("id_user"))
                     .email(rs.getString("email"))
                     .username(rs.getString("username"))
                     .password(rs.getString("password"))
@@ -87,7 +120,7 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
                 throw new ObjetInconnuDaoException("Utilisateur inexistante : "+id_user);
             else
                     return Utilisateur.builder()
-                    .id_user(rs.getInt("id_user"))
+                    .idUser(rs.getInt("id_user"))
                     .email(rs.getString("email"))
                     .username(rs.getString("username"))
                     .password(rs.getString("password"))

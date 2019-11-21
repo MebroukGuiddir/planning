@@ -12,6 +12,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @ToString
 public class Admin extends Utilisateur {
-
+   private  int idAdmin;
 
 }

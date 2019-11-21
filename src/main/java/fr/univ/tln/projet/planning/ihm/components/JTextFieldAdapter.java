@@ -10,10 +10,11 @@ public class JTextFieldAdapter extends JPanel {
       public JTextFieldAdapter(String title, String error){
           super();
           this.setLayout(new BorderLayout());
+          GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+          int width = gd.getDisplayMode().getWidth();
+          int height = gd.getDisplayMode().getHeight();
           errorLabel =new JLabel(error);
           errorLabel.setFont(new Font("Arial", Font.BOLD, 12));
-          //textLabel.setSize(100, 20);
-         // textLabel.setPreferredSize(new Dimension(100, 20));
           errorLabel.setForeground(new Color(157, 43, 64));
           errorLabel.setVisible(false);
 
@@ -25,9 +26,10 @@ public class JTextFieldAdapter extends JPanel {
 
           textField=new JTextField();
           textField.setFont(new Font("Arial",Font.PLAIN, 12));
-          textField.setSize(140, 20);
-          textField.setPreferredSize(new Dimension(140, 20));
-          textField.setMaximumSize(new Dimension(140, 20));
+          textField.setSize(width/5, height/18);
+          textField.setPreferredSize(new Dimension(width/5, height/18));
+          textField.setMaximumSize(new Dimension(width/5, height/18));
+          textField.setMinimumSize(new Dimension(width/5, height/18));
 
           this.add(textLabel,BorderLayout.WEST);
           this.add(textField,BorderLayout.EAST);

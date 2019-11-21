@@ -3,9 +3,11 @@ package fr.univ.tln.projet.planning.modele;
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.dao.DB;
 import fr.univ.tln.projet.planning.dao.EtudiantDao;
+import fr.univ.tln.projet.planning.dao.ResponsableDao;
 import fr.univ.tln.projet.planning.dao.UtilisateurDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
+import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import fr.univ.tln.projet.planning.modele.observer.Observable;
 import lombok.Getter;
@@ -97,10 +99,34 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     public JSONObject addResponsable(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
       //  responsables.add(Responsable.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
-
-
         JSONObject message = new JSONObject();
-        return  message;
+        try {
+            ResponsableDao dao = new ResponsableDao(bd);
+            Responsable.setDao(dao);
+            Responsable responsable = dao.creer(email, username, password, nom, prenom, adresse, mobile, birthday, genre);
+
+            logger.info("new 'Responsable' was added :" + responsable);
+            //notifyObserver(responsables, Changement.builder().type(Changement.Type.ADD).section(Changement.Section.Responsable).build());
+
+            message.put("status","created");
+            message.put("message", "user created");
+            message.put("code", 201);
+            return message;
+        } catch (ObjectExistDaoException exception){
+            message.put("status","Conflict");
+            message.put("message", "user aleardy  exist");
+            message.put("code", 409);
+            return message;
+        }
+        catch (DaoException exception){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+
+
+
     }
 
     @Override
@@ -125,26 +151,58 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     }
 
     @Override
-    public boolean UserLogin(String username, String password) {
-       for(Etudiant etudiant:etudiants)
-           if(etudiant.getUsername()==username && etudiant.getPassword()==password){
-               logger.info("etudiant login");
-               notifyObserver(etudiant, Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ETUDIANT).build());
-           }
-        for(Enseignant enseignant:enseignants)
-        if(enseignant.getUsername()==username && enseignant.getPassword()==password){
-            logger.info("enseignant login");
-            notifyObserver(enseignant,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ENSEIGANT).build());
+    public JSONObject etudiantLogin(String username, String password) {
+        JSONObject message = new JSONObject();
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+            Etudiant etudiant= dao.trouver(username,password);
+            message.put("status","Authentification");
+            message.put("message", "Login success");
+            message.put("nom",etudiant.getNom());
+            message.put("prenom",etudiant.getPrenom());
+            message.put("code", 200 );
+            notifyObserver(etudiant,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
+            return message;
+        }catch ( ObjetInconnuDaoException exe){
+            logger.info("user not found :username ="+username+" password = "+password);
+            message.put("status","Authentification");
+            message.put("message", "Invalid token gives");
+            message.put("code", 401 );
+            return message;
+        }catch (DaoException exe){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
         }
-        for(Admin admin:admins)
-        if(admin.getUsername().equals(username) && admin.getPassword().equals(password)){
-            logger.info("Admin login");
-            notifyObserver(admin,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
+    }
+    @Override
+    public JSONObject adminLogin(String username, String password) {
+        JSONObject message = new JSONObject();
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+            Etudiant etudiant= dao.trouver(username,password);
+            message.put("status","Authentification");
+            message.put("message", "Login success");
+            message.put("nom",etudiant.getNom());
+            message.put("prenom",etudiant.getPrenom());
+            message.put("code", 200 );
+            notifyObserver(etudiant,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
+            return message;
+        }catch ( ObjetInconnuDaoException exe){
+            logger.info("user not found :username ="+username+" password = "+password);
+            message.put("status","Authentification");
+            message.put("message", "Invalid token gives");
+            message.put("code", 401 );
+            return message;
+        }catch (DaoException exe){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
         }
-        logger.info("user not found :username ="+username+" password = "+password);
-        logger.info(admins.toString());
-        notifyObserver(null,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
-        return false;
     }
 
     @Override

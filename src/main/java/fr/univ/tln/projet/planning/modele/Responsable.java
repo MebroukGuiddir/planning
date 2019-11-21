@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @ToString
 public class Responsable extends Enseignant {
+    private int idResponsable;
     public String toString() {
         return "Responsable [login=" + username + ", prenom=" + prenom + ", nom=" + nom + "]";
     }

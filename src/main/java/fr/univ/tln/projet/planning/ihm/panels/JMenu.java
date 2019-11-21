@@ -78,8 +78,7 @@ public class JMenu extends JPanel {
 
 
     public JMenu addItem(String item, JPanel  panel){
-        panel.setMinimumSize(new Dimension(700,400));
-        panel.setPreferredSize(new Dimension(700,400));
+
         panel.setOpaque(true);
         panel.setBackground(new Color(199, 201, 202));
         modele.addElement(item);
