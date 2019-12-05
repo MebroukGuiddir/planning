@@ -15,7 +15,7 @@ import java.awt.*;
 import java.text.ParseException;
 import java.util.regex.Pattern;
 
-public class AddUserVue extends JPanel  {
+public class AddUserVue extends JPanel {
     // Components of the Form
 
     private AbstractControler adminControler;

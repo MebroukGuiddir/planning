@@ -4,21 +4,19 @@ package fr.univ.tln.projet.planning.ihm.vue;
  * @since 1.0
  */
 import fr.univ.tln.projet.planning.controler.AbstractControler;
-import fr.univ.tln.projet.planning.controler.Changement;
-
+import fr.univ.tln.projet.planning.ihm.components.Tabbed;
+import fr.univ.tln.projet.planning.ihm.components.TabbedPaneAdapter;
 import fr.univ.tln.projet.planning.ihm.panels.JFooter;
 import fr.univ.tln.projet.planning.ihm.panels.JHeaderPanel;
 import fr.univ.tln.projet.planning.ihm.panels.JMenu;
-import fr.univ.tln.projet.planning.modele.Utilisateur;
-import fr.univ.tln.projet.planning.modele.observer.Observer;
-
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomaineVue;
+import net.miginfocom.swing.MigLayout;
 import org.json.simple.JSONObject;
-
 import java.awt.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
 
-public class LoginVue extends JFrame implements  Observer {
+public class LoginVue extends JFrame{
     JLabel l1, l2, l3,l4;
     JTextField tf1;
     JButton btn1;
@@ -106,6 +104,8 @@ public class LoginVue extends JFrame implements  Observer {
                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
                     case 500:
                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
+                    case 200:
+                        login((String) response.get("nom"),(String)response.get("prenom"),(String)response.get("user"));
                 }
             }
 
@@ -132,34 +132,38 @@ public class LoginVue extends JFrame implements  Observer {
         this.setVisible(true);
     }
 
-
-    private static boolean check(String regex,String text){
-        return Pattern.compile(regex).matcher(text).matches();
-    }
-
-    @Override
-    public void update(Object object, Changement changement) {
-        if(changement.type== Changement.Type.LOGIN && changement.section == Changement.Section.ADMIN && object!=null){
-        //Création de la fenêtre avec le contrôleur en paramètre
+    private void login(String nom, String prenom, String user) {
         final JFrame frame = new JFrame ("Hyper-Planning");
-          //fixe screen size
-            frame.setResizable(false);
-            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-            int width = gd.getDisplayMode().getWidth();
-            int height = gd.getDisplayMode().getHeight();
+        //fixe screen size
+        frame.setResizable(false);
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int width = gd.getDisplayMode().getWidth();
+        int height = gd.getDisplayMode().getHeight();
         //header
-        JHeaderPanel jHeaderPanel=new JHeaderPanel(new JLabel(java.time.LocalDate.now().toString()),new JLabel(((Utilisateur)object).getNom()+"  "+((Utilisateur)object).getPrenom()));
+        JHeaderPanel jHeaderPanel=new JHeaderPanel(new JLabel(java.time.LocalDate.now().toString()),new JLabel(nom+"  "+prenom));
         jHeaderPanel.setJHeaderVue(width-100,50,new Color(7, 21, 23));
         //footer
         JFooter jFooter= new JFooter();
         jFooter.setJFooterVue(width-100,50,new Color(7, 21, 23));
         //body
-        JPanel p1=new AddUserVue(controler);
-        JPanel p2=new ListUserVue(controler);
-        JPanel p3=new JPanel();
-        p3.add(new JLabel("3"));
-        JMenu jMenu= new JMenu().addItem("Ajouter compte",p1).addItem("Liste Compte",p2).addItem("Gérer les ressources",p3);
-        jMenu.setJMenuVue(width-100,height-100,new Color(10, 24, 65));
+        JMenu jMenu = new JMenu();
+        switch (user) {
+            case "Etudiant":break;
+            case "Admin":
+                JPanel p1 = new ListUserVue(controler);
+                JPanel p2 = new InfrastructuresVue(controler);
+                JPanel p3 = new DomaineVue(controler);
+
+
+                jMenu.addItem("Gérer les comptes", p1).addItem("Gérer les infrastructures", p2).addItem("Gérer les études", p3);
+                break;
+
+            case "Enseignant":break;
+            case "Responsable":break;
+
+        }
+        jMenu.setUser("Espace "+user);
+        jMenu.setJMenuVue(width - 100, height - 100, new Color(10, 24, 65));
         Template template=new Template(jHeaderPanel,jMenu, jFooter );
         template.setTemplateVue(new Color(45,45,45));
 
@@ -169,7 +173,12 @@ public class LoginVue extends JFrame implements  Observer {
         frame.setVisible(true);
         this.setVisible(false);
     }
+
+
+    private static boolean check(String regex,String text){
+        return Pattern.compile(regex).matcher(text).matches();
     }
+
     private void addComponentWithPanel(Component component,JPanel panel){
         JPanel subPanel= new JPanel();
         subPanel.add(component);

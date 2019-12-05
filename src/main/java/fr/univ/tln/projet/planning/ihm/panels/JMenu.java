@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class JMenu extends JPanel {
-    private JLabel user=new JLabel("Espace Admin");
+    private JLabel user=new JLabel( );
     private  JList jList = new JList();
     private ArrayList <JPanel> panels=new ArrayList();
     private JPanel panelMenu=new JPanel();

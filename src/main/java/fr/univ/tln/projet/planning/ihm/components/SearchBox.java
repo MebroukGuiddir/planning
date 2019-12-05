@@ -7,14 +7,15 @@ import java.awt.*;
 @Getter
 public class SearchBox extends JPanel {
     private JTextField searchable = new JTextField(30);
-    private JButton searchB = new JButton("Search");
+    private JButton searchB ;
 
     private JPanel panel = new JPanel();
 
 
 
-    public SearchBox() throws HeadlessException {
+    public SearchBox(String button) throws HeadlessException {
         super();
+        searchB = new JButton(button);
         setSize(600, 600);
         addComponents();
 

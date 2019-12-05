@@ -3,18 +3,19 @@ package fr.univ.tln.projet.planning.ihm.vue;
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.ihm.components.SearchBox;
-import fr.univ.tln.projet.planning.modele.Utilisateur;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ListUserVue extends JPanel implements Observer {
-    private ModeleDynamiqueObjet modele = new ModeleDynamiqueObjet();
+    private ModeleDynamiqueObjet modele = new ModeleDynamiqueObjet(new String []{"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"});
     private JTable list;
     private AbstractControler controler;
 
@@ -22,14 +23,14 @@ public class ListUserVue extends JPanel implements Observer {
         super();
         this.controler =controler;
         this.setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
-        modele.updateModel(controler.selectEtudiants(""));
-        JPanel jHeader =new JPanel();
         JComboBox status = new JComboBox(new String[]{"Etudiant", "Enseignant","Responsable","Admin"});
-        SearchBox recherche =new SearchBox();
+        modele.updateModel(controler.selectUsers("",status.getSelectedItem().toString()));
+        JPanel jHeader =new JPanel();
+        SearchBox recherche =new SearchBox("Recherche");
         jHeader.add(status);
         jHeader.add(recherche);
         recherche.getSearchB().addActionListener(actionEvent -> {
-            modele.updateModel(  this.controler.selectEtudiants(recherche.getSearchable().getText()));
+            modele.updateModel(  this.controler.selectUsers(recherche.getSearchable().getText(),status.getSelectedItem().toString()));
         });
         JPanel boutons = new JPanel();
         JButton supprimer=new JButton("Supprimer");
@@ -40,26 +41,31 @@ public class ListUserVue extends JPanel implements Observer {
                 case 200:
                     JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.INFORMATION_MESSAGE);
                     for(int i = selection.length - 1; i >= 0; i--){
-                        modele.removeUtilisateur(selection[i]);
+                        modele.removeRow(selection[i]);
                     }break;
                 case 500:
                     JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
             }
 
         });
-        JButton rafraichir=new JButton("rafraîchir");
-        rafraichir.addActionListener((actionEvent) -> {
-           // this.controler.rafrichirListeUtilisateur();
+        JButton creer=new JButton("créer");
+        creer.addActionListener((actionEvent) -> {
+            JPanel addUserPanel=new AddUserVue(controler);
+            JFrame addUserFrame=new JFrame();
+            addUserFrame.setSize(new Dimension(1000,500));
+            addUserFrame.setContentPane(addUserPanel);
+            addUserFrame.setVisible(true);
         });
         boutons.add(supprimer);
-        boutons.add(rafraichir);
+        boutons.add(creer);
 
         list = new JTable(modele);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(list);
-        this.add(jHeader);
-        this.add(scrollPane);
         this.add(boutons);
+         this.add(jHeader);
+        this.add(scrollPane);
+
 
     }
 
@@ -70,61 +76,61 @@ public class ListUserVue extends JPanel implements Observer {
          if(changement.type==Changement.Type.ADD){}
     }
 
-    public class ModeleDynamiqueObjet extends AbstractTableModel {
-        private final List<Utilisateur> utilisateurs = new ArrayList<Utilisateur>();
-        private final String[] entetes = {"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"};
-
-        public ModeleDynamiqueObjet() {
+    public class ModeleDynamiqueObjet <T> extends AbstractTableModel {
+        private final List<T> rows = new ArrayList<>();
+        private final String[] entetes;
+        public ModeleDynamiqueObjet(String [] entetes) {
             super();
+            this.entetes=entetes;
         }
-
         public int getRowCount() {
-            return utilisateurs.size();
+            return rows.size();
         }
-
         public int getColumnCount() {
             return entetes.length;
         }
-
         public String getColumnName(int columnIndex) {
             return entetes[columnIndex];
         }
-
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(int rowIndex, int columnIndex ) {
             switch(columnIndex){
+
                 case 0:
-                    return utilisateurs.get(rowIndex).getPrenom();
+                    return ((Utilisateur)rows.get(rowIndex)).getPrenom();
                 case 1:
-                    return utilisateurs.get(rowIndex).getNom();
+                    return ((Utilisateur)rows.get(rowIndex)).getNom();
                 case 2:
-                    return utilisateurs.get(rowIndex).getEmail();
+                    return ((Utilisateur)rows.get(rowIndex)).getEmail();
                 case 3:
-                    return  utilisateurs.get(rowIndex).getUsername();
+                    return  ((Utilisateur)rows.get(rowIndex)).getUsername();
                 case 4:
-                    return utilisateurs.get(rowIndex).getAdresse();
+                    return ((Utilisateur)rows.get(rowIndex)).getAdresse();
                 case 5:
-                    return utilisateurs.get(rowIndex).getDateNaissance();
+                    return ((Utilisateur)rows.get(rowIndex)).getDateNaissance();
                 default:
                     return null; //Ne devrait jamais arriver
             }
         }
 
-        public void updateUtilisateur(Utilisateur utilisateur) {
-            utilisateurs.add(utilisateur);
+        public void updateRows(T row) {
+            rows.add(row);
 
-            fireTableRowsInserted(utilisateurs.size() -1, utilisateurs.size() -1);
+            fireTableRowsInserted(rows.size() -1, rows.size() -1);
         }
 
-        public void removeUtilisateur(int rowIndex) {
-            utilisateurs.remove(rowIndex);
+        public void removeRow(int rowIndex) {
+            rows.remove(rowIndex);
 
             fireTableRowsDeleted(rowIndex, rowIndex);
         }
-        public void updateModel(Collection<Utilisateur> utilisateurs){
-            this.utilisateurs.clear();
-            this.utilisateurs.addAll(utilisateurs);
-            System.out.println(this.utilisateurs);
+        public void updateModel(Collection<T> rows){
+            this.rows.clear();
+            this.rows.addAll(rows);
+            System.out.println(this.rows);
             fireTableDataChanged();
         }
     }
+
+
+
 }

@@ -1,20 +1,22 @@
 package fr.univ.tln.projet.planning.modele;
 
 import fr.univ.tln.projet.planning.controler.Changement;
-import fr.univ.tln.projet.planning.dao.DB;
-import fr.univ.tln.projet.planning.dao.EtudiantDao;
-import fr.univ.tln.projet.planning.dao.ResponsableDao;
-import fr.univ.tln.projet.planning.dao.UtilisateurDao;
+import fr.univ.tln.projet.planning.dao.*;
+import fr.univ.tln.projet.planning.dao.infrastractureDao.BatimentDao;
+import fr.univ.tln.projet.planning.dao.infrastractureDao.SalleDao;
+import fr.univ.tln.projet.planning.dao.utilisateursDao.*;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
+import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
+import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
+import fr.univ.tln.projet.planning.modele.utilisateurs.*;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import fr.univ.tln.projet.planning.modele.observer.Observable;
 import lombok.Getter;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,14 +84,73 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return null;
     }
 
+    @Override
+    public List<Utilisateur> selectAdmins(String motif) {
+        try {
+            AdminDao dao = new AdminDao(bd);
+            Admin.setDao(dao);
+            return dao.selectionner(motif);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Utilisateur> selectResponsables(String motif) {
+        try {
+            ResponsableDao dao = new ResponsableDao(bd);
+            Responsable.setDao(dao);
+            return dao.selectionner(motif);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Utilisateur> selectEnseignants(String motif) {
+        try {
+            EnseignantDao dao = new EnseignantDao(bd);
+            Enseignant.setDao(dao);
+            return dao.selectionner(motif);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     @Override
     public JSONObject addEnseignant(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
-     //   enseignants.add(Enseignant.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
         JSONObject message = new JSONObject();
-        return  message;
+        try {
+            EnseignantDao dao = new EnseignantDao(bd);
+            Enseignant.setDao(dao);
+            Enseignant enseignant = dao.creer(email, username, password, nom, prenom, adresse, mobile, birthday, genre);
+
+            logger.info("new 'Responsable' was added :" + enseignant);
+
+
+            message.put("status","created");
+            message.put("message", "user created");
+            message.put("code", 201);
+            return message;
+        } catch (ObjectExistDaoException exception){
+            message.put("status","Conflict");
+            message.put("message", "user aleardy  exist");
+            message.put("code", 409);
+            return message;
+        }
+        catch (DaoException exception){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+
+
     }
 
 
@@ -97,7 +158,6 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
 
     @Override
     public JSONObject addResponsable(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
-      //  responsables.add(Responsable.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
 
         JSONObject message = new JSONObject();
         try {
@@ -129,24 +189,35 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
 
     }
 
-    @Override
-    public boolean listEtudiant() {
-        return false;
-    }
 
-    @Override
-    public boolean listEnseignant() {
-        return false;
-    }
 
     @Override
     public JSONObject addAdmin(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) {
-        //admins.add(Admin.builder().nom(nom).prenom(prenom).dateNaissance(birthday).email(email).password(password).username(username).dateCreation(LocalDateTime.now()).build());
-
-
-
         JSONObject message = new JSONObject();
-        return  message;
+        try {
+            AdminDao dao = new AdminDao(bd);
+            Admin.setDao(dao);
+            Admin admin = dao.creer(email, username, password, nom, prenom, adresse, mobile, birthday, genre);
+            logger.info("new 'Admin' was added :" + admin);
+            message.put("status","created");
+            message.put("message", "user created");
+            message.put("code", 201);
+            return message;
+        } catch (ObjectExistDaoException exception){
+            message.put("status","Conflict");
+            message.put("message", "user aleardy  exist");
+            message.put("code", 409);
+            return message;
+        }
+        catch (DaoException exception){
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+
+
+
 
     }
 
@@ -161,8 +232,8 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("message", "Login success");
             message.put("nom",etudiant.getNom());
             message.put("prenom",etudiant.getPrenom());
+            message.put("user","Etudiant");
             message.put("code", 200 );
-            notifyObserver(etudiant,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
             return message;
         }catch ( ObjetInconnuDaoException exe){
             logger.info("user not found :username ="+username+" password = "+password);
@@ -181,23 +252,26 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     public JSONObject adminLogin(String username, String password) {
         JSONObject message = new JSONObject();
         try {
-            EtudiantDao dao = new EtudiantDao(bd);
-            Etudiant.setDao(dao);
-            Etudiant etudiant= dao.trouver(username,password);
+            AdminDao dao = new AdminDao(bd);
+            Admin.setDao(dao);
+
+            Admin admin= dao.trouver(username,password);
             message.put("status","Authentification");
             message.put("message", "Login success");
-            message.put("nom",etudiant.getNom());
-            message.put("prenom",etudiant.getPrenom());
+            message.put("nom",admin.getNom());
+            message.put("prenom",admin.getPrenom());
+            message.put("user","Admin");
             message.put("code", 200 );
-            notifyObserver(etudiant,Changement.builder().type(Changement.Type.LOGIN).section(Changement.Section.ADMIN).build());
+
             return message;
         }catch ( ObjetInconnuDaoException exe){
-            logger.info("user not found :username ="+username+" password = "+password);
+            logger.info("user not found :username ="+username);
             message.put("status","Authentification");
             message.put("message", "Invalid token gives");
             message.put("code", 401 );
             return message;
         }catch (DaoException exe){
+            logger.info("Login/Internal Server Error");
             message.put("status","Internal Server Error ");
             message.put("message", "Internal Server Error ");
             message.put("code", 500 );
@@ -224,8 +298,107 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             return message;
         }
     }
+    @Override
+    public JSONObject addBatiment(String identifiant){
+        JSONObject message = new JSONObject();
+     logger.info("Batiment add");
+        try {
+            BatimentDao dao = new BatimentDao(bd);
+            Batiment.setDao(dao);
+            dao.creer(identifiant);
+            message.put("status", "Success");
+            message.put("message", "batiment added");
+            message.put("code", 200);
+            return message;
 
-        //Implémentation du pattern observer
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce Batiment exist deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+    @Override
+    public JSONObject deleteBatiment(String identifiant){
+        JSONObject message = new JSONObject();
+        logger.info("Batiment supprimer");
+        try {
+            BatimentDao dao = new BatimentDao(bd);
+            Batiment.setDao(dao);
+            dao.supprimer(identifiant);
+            message.put("status", "Success");
+            message.put("message", "batiment supprimer");
+            message.put("code", 200);
+            return message;
+
+
+
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+
+    @Override
+    public JSONObject addSalle(String identifiant, String batiment) {
+        JSONObject message = new JSONObject();
+        logger.info(" add / Salle");
+        try {
+            SalleDao dao = new SalleDao(bd);
+            Salle.setDao(dao);
+            dao.creer(identifiant,batiment);
+            message.put("status", "Success");
+            message.put("message", "salle  ajouté");
+            message.put("code", 200);
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "cette salle exist deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+
+    @Override
+    public List<Batiment> selectBatiments() {
+        try {
+            BatimentDao dao = new BatimentDao(bd);
+            Batiment.setDao(dao);
+            return dao.selectionner();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @Override
+    public List<Salle> selectSalles(String batiment) {
+        try {
+            SalleDao dao = new  SalleDao(bd);
+           Salle.setDao(dao);
+            return dao.selectionner(batiment);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);
     }

@@ -1,11 +1,13 @@
 package fr.univ.tln.projet.planning.controler;
 
-import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 
-import fr.univ.tln.projet.planning.modele.Utilisateur;
+import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
+import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,9 +37,15 @@ public abstract class AbstractControler {
       }
 
     }
-    public List<Utilisateur> selectEtudiants(String motif){
-        List<Utilisateur> list = adminModele.selectEtudiants(motif);
-        logger.info("list etudiants :"+list.toString());
+    public List<Utilisateur> selectUsers(String motif,String status){
+        List<Utilisateur> list ;
+       switch (status){
+           case "Etudiant": list = adminModele.selectEtudiants(motif);break;
+           case "Admin": list = adminModele.selectAdmins(motif);break;
+           case "Enseignant": list = adminModele.selectEnseignants(motif);break;
+           case "Responsable": list = adminModele.selectResponsables(motif);break;
+           default:list=new ArrayList<>();
+       }
         return list;
     }
 
@@ -59,5 +67,31 @@ public abstract class AbstractControler {
     public JSONObject deleteUser(String username){
         logger.info("Controler/delete User:"+username);
         return adminModele.deleteUser(username);
+    }
+
+
+    /**
+     *
+     */
+    public JSONObject addBatiment(String identifiant){
+        logger.info("Controler/add Batiment:"+identifiant);
+        return adminModele.addBatiment(identifiant);
+    }
+    /**
+     *
+     */
+    public JSONObject deleteBatiment(String identifiant){
+        logger.info("Controler/delete Batiment:"+identifiant);
+        return adminModele.deleteBatiment(identifiant);
+    }
+    public List<Batiment> selectBatiments(){
+         return   adminModele.selectBatiments();
+    }
+
+    public JSONObject  addSalle(String identifiant, String batiment){
+        return adminModele.addSalle(identifiant,batiment);
+    }
+    public List<Salle> selectSalles(String batiment){
+        return   adminModele.selectSalles(batiment);
     }
 }
