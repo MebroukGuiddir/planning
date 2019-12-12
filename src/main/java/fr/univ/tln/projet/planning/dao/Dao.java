@@ -50,13 +50,13 @@ public abstract class Dao<E>{
     public abstract E trouver(String id) throws DaoException;
 
     /** teste si l'objet d'identifiant donné existe en base
-     * @param username l'identifiant
+     * @param identifiant l'identifiant
      * @return true si l'objet existe en base, faux sinon
      * @throws DaoException
      */
-    public boolean isExisteDansLaBase(String username) throws DaoException{
+    public boolean isExisteDansLaBase(String identifiant) throws DaoException{
         try {
-            trouver(username);
+            trouver(identifiant);
             return true;
         }
         catch (ObjetInconnuDaoException exp) {

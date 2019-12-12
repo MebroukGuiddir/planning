@@ -2,12 +2,16 @@ package fr.univ.tln.projet.planning.modele;
 
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.dao.*;
+import fr.univ.tln.projet.planning.dao.etudesDao.*;
 import fr.univ.tln.projet.planning.dao.infrastractureDao.BatimentDao;
 import fr.univ.tln.projet.planning.dao.infrastractureDao.SalleDao;
 import fr.univ.tln.projet.planning.dao.utilisateursDao.*;
+import fr.univ.tln.projet.planning.dao.utilisateursDao.EnseignantDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
+import fr.univ.tln.projet.planning.modele.etudes.*;
+import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
 import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
 import fr.univ.tln.projet.planning.modele.utilisateurs.*;
@@ -20,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Getter
@@ -33,7 +38,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     DB bd = new DB("Bd.properties");
 
 
-    public AdminModele() throws IOException, ClassNotFoundException, DaoException {
+    public AdminModele() throws IOException, ClassNotFoundException {
     }
 
 
@@ -397,13 +402,223 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return null;
     }
 
+    @Override
+    public JSONObject addDomaine(String intitule) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/add Domaine");
+        try {
+            DomaineDao dao = new DomaineDao(bd);
+            Domaine.setDao(dao);
+            dao.creer(intitule);
+            message.put("status", "Success");
+            message.put("message", "nouveau domaine ajouté");
+            message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.DOMAINE).type(Changement.Type.ADD).build());
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce Domaine existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            logger.info(e.toString());
+            return message;
+        }
+    }
+
+    @Override
+    public List<Domaine> selectDomaines() {
+        try {
+            DomaineDao dao = new  DomaineDao(bd);
+            Domaine.setDao(dao);
+            return dao.selectionner();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject addFormation(String intitule, String niveau, int domaine) {
+        JSONObject message = new JSONObject();
+        logger.info(" add / formation");
+        try {
+            FormationDao dao = new FormationDao(bd);
+            Formation.setDao(dao);
+            dao.creer(intitule,niveau,domaine);
+            message.put("status", "Success");
+            message.put("message", "Formation ajouté");
+            message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.FORMATION).type(Changement.Type.ADD).build());
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "cette Formation existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            logger.info(e.toString());
+            return message;
+        }
+    }
+
+    @Override
+    public List<Formation> selectFormations(int domaine) {
+        try {
+            FormationDao dao = new  FormationDao(bd);
+            Formation.setDao(dao);
+            return dao.selectionner(domaine);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject addModule(String libelle, String formation) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Module");
+        try {
+            ModuleDao dao = new ModuleDao(bd);
+            Module.setDao(dao);
+            dao.creer(libelle,formation);
+            message.put("status", "Success");
+            message.put("message", "Module ajouté");
+            message.put("code", 200);
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce Module existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+
+    @Override
+    public List<Module> selectModules(String formation) {
+        try {
+            ModuleDao dao = new  ModuleDao(bd);
+            Module.setDao(dao);
+            return dao.selectionner(formation);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject addPromotion(String annee, String formation,String niveau) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Module");
+        try {
+            PromotionDao dao = new PromotionDao(bd);
+            Promotion.setDao(dao);
+            dao.creer(annee,formation,niveau);
+            message.put("status", "Success");
+            message.put("message", "Module ajouté");
+            message.put("code", 200);
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce Module existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+
+    @Override
+    public List<Promotion> selectPromotions(String formation) {
+        try {
+            PromotionDao dao = new  PromotionDao(bd);
+            Promotion.setDao(dao);
+            return dao.selectionner(formation);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject addSection(String identifiant, String promotion) {
+        return null;
+    }
+
+    @Override
+    public List<Section> selectSections(String promotion) {
+        return null;
+    }
+
+    @Override
+    public JSONObject addGroupe(String identifiant, String promotion) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Groupe");
+        try {
+            GroupeDao dao = new GroupeDao(bd);
+            Groupe.setDao(dao);
+            dao.creer(identifiant,promotion);
+            message.put("status", "Success");
+            message.put("message", "Groupe ajouté");
+            message.put("code", 200);
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce Groupe existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            return message;
+        }
+    }
+
+    @Override
+    public List<Groupe> selectGroupes(String section) {
+
+            try {
+                GroupeDao dao = new  GroupeDao(bd);
+                Groupe.setDao(dao);
+                return dao.selectionner(section);
+            } catch (DaoException e) {
+                e.printStackTrace();
+            }
+            return null;
+    }
+
 
     //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);
     }
 
-    public void notifyObserver(Object object,Changement changement) {
+    public void notifyObserver(Object object, Changement changement) {
 
 
         for(Observer obs : listObserver)

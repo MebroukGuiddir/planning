@@ -4,13 +4,13 @@ package fr.univ.tln.projet.planning.ihm.vue;
  * @since 1.0
  */
 import fr.univ.tln.projet.planning.controler.AbstractControler;
-import fr.univ.tln.projet.planning.ihm.components.Tabbed;
-import fr.univ.tln.projet.planning.ihm.components.TabbedPaneAdapter;
 import fr.univ.tln.projet.planning.ihm.panels.JFooter;
 import fr.univ.tln.projet.planning.ihm.panels.JHeaderPanel;
 import fr.univ.tln.projet.planning.ihm.panels.JMenu;
-import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomaineVue;
-import net.miginfocom.swing.MigLayout;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomainePanel;
+
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudesVue;
+import fr.univ.tln.projet.planning.modele.AdminModele;
 import org.json.simple.JSONObject;
 import java.awt.*;
 import java.util.regex.Pattern;
@@ -23,10 +23,11 @@ public class LoginVue extends JFrame{
     JPasswordField p1;
     JComboBox status;
     AbstractControler controler;
-
-    public LoginVue(AbstractControler controler) {
+    AdminModele modele;
+    public LoginVue(AbstractControler controler,AdminModele modele) {
         super();
         this.controler=controler;
+        this.modele=modele;
         this.setTitle("Connexion");
         this.setResizable(false);
         this.setSize(600,400);
@@ -136,6 +137,8 @@ public class LoginVue extends JFrame{
         final JFrame frame = new JFrame ("Hyper-Planning");
         //fixe screen size
         frame.setResizable(false);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setUndecorated(true);
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
@@ -152,7 +155,7 @@ public class LoginVue extends JFrame{
             case "Admin":
                 JPanel p1 = new ListUserVue(controler);
                 JPanel p2 = new InfrastructuresVue(controler);
-                JPanel p3 = new DomaineVue(controler);
+                JPanel p3 = new EtudesVue(controler,modele);
 
 
                 jMenu.addItem("Gérer les comptes", p1).addItem("Gérer les infrastructures", p2).addItem("Gérer les études", p3);
@@ -164,6 +167,7 @@ public class LoginVue extends JFrame{
         }
         jMenu.setUser("Espace "+user);
         jMenu.setJMenuVue(width - 100, height - 100, new Color(10, 24, 65));
+
         Template template=new Template(jHeaderPanel,jMenu, jFooter );
         template.setTemplateVue(new Color(45,45,45));
 

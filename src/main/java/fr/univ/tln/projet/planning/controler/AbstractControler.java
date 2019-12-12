@@ -2,6 +2,7 @@ package fr.univ.tln.projet.planning.controler;
 
 import fr.univ.tln.projet.planning.modele.AdminModele;
 
+import fr.univ.tln.projet.planning.modele.etudes.*;
 import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
 import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
@@ -94,4 +95,37 @@ public abstract class AbstractControler {
     public List<Salle> selectSalles(String batiment){
         return   adminModele.selectSalles(batiment);
     }
+
+    public JSONObject  addDomaine(String intitule){
+        return adminModele.addDomaine(intitule);
+    }
+    public List<Domaine> selectDomaines(){
+        return   adminModele.selectDomaines();
+    }
+    public JSONObject  addFormation(String intitule,String niveau,int domaine){
+        return adminModele.addFormation(intitule,niveau,domaine);
+    }
+    public List<Formation> selectFormations(int domaine){
+        return   adminModele.selectFormations( domaine);
+    }
+    public JSONObject  addPromotion(String annee,String formation,String niveau){
+        return adminModele.addPromotion(annee,formation,niveau);
+    }
+    public List<Promotion> selectPromotions(String formation){
+        return   adminModele.selectPromotions( formation);
+    }
+    public JSONObject  addSection(String identifiant,String promotion){
+        return adminModele.addSection(identifiant,promotion);
+    }
+    public List<Section> selectSections(String promotion){
+        return   adminModele.selectSections( promotion);
+    }
+    public JSONObject  addGroupe(String identifiant,String section){
+        return adminModele.addGroupe(identifiant,section);
+    }
+    public List<Groupe> selectGroupes(String section){
+        return   adminModele.selectGroupes( section);
+    }
+
+
 }

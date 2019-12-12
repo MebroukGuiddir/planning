@@ -2,20 +2,17 @@ package fr.univ.tln.projet.planning.ihm.vue;
 
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.controler.Changement;
+import fr.univ.tln.projet.planning.ihm.components.jTable.ModeleDynamiqueObject;
 import fr.univ.tln.projet.planning.ihm.components.SearchBox;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class ListUserVue extends JPanel implements Observer {
-    private ModeleDynamiqueObjet modele = new ModeleDynamiqueObjet(new String []{"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"});
+    private ModeleDynamiqueUtilisateur modele = new ModeleDynamiqueUtilisateur(new String []{"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"});
     private JTable list;
     private AbstractControler controler;
 
@@ -76,22 +73,12 @@ public class ListUserVue extends JPanel implements Observer {
          if(changement.type==Changement.Type.ADD){}
     }
 
-    public class ModeleDynamiqueObjet <T> extends AbstractTableModel {
-        private final List<T> rows = new ArrayList<>();
-        private final String[] entetes;
-        public ModeleDynamiqueObjet(String [] entetes) {
-            super();
-            this.entetes=entetes;
+    public class ModeleDynamiqueUtilisateur<T> extends ModeleDynamiqueObject<T> {
+
+        public ModeleDynamiqueUtilisateur(String[] entetes) {
+            super(entetes);
         }
-        public int getRowCount() {
-            return rows.size();
-        }
-        public int getColumnCount() {
-            return entetes.length;
-        }
-        public String getColumnName(int columnIndex) {
-            return entetes[columnIndex];
-        }
+
         public Object getValueAt(int rowIndex, int columnIndex ) {
             switch(columnIndex){
 
@@ -112,23 +99,7 @@ public class ListUserVue extends JPanel implements Observer {
             }
         }
 
-        public void updateRows(T row) {
-            rows.add(row);
 
-            fireTableRowsInserted(rows.size() -1, rows.size() -1);
-        }
-
-        public void removeRow(int rowIndex) {
-            rows.remove(rowIndex);
-
-            fireTableRowsDeleted(rowIndex, rowIndex);
-        }
-        public void updateModel(Collection<T> rows){
-            this.rows.clear();
-            this.rows.addAll(rows);
-            System.out.println(this.rows);
-            fireTableDataChanged();
-        }
     }
 
 

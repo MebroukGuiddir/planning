@@ -25,15 +25,13 @@ public class App
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
-            } catch (DaoException e) {
-                e.printStackTrace();
             }
 
             //Création du contrôleur
         AbstractControler controler = new Controler(adminModele);
 
 
-        LoginVue  loginVue=new LoginVue(controler);
+        LoginVue  loginVue=new LoginVue(controler,adminModele);
 
 
     });

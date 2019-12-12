@@ -1,12 +1,12 @@
 package fr.univ.tln.projet.planning.ihm.components;
 
-import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
+import fr.univ.tln.projet.planning.ihm.components.JLabelAdapter;
 
 public class JListAdapter<T> extends JPanel {
     JLabelAdapter label;

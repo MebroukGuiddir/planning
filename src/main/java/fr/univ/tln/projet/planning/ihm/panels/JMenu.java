@@ -44,7 +44,8 @@ public class JMenu extends JPanel {
         jList.setSelectionForeground(new Color(199, 201, 202));
         jList.setForeground(new Color(199, 201, 202));
         jList.setAlignmentX(0);
-        jList.setAlignmentX(0);
+
+        jList.setAlignmentY(0);
         jList.setPreferredSize(new Dimension(300,300));
         jList.setMinimumSize(new Dimension(300,300));
         jList.addListSelectionListener(new ListSelectionListener() {
