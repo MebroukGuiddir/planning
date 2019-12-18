@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class Section {
     private int idSection;
-    private String identifiant;
+    private int identifiant;
     private Promotion promotion;
     private static SectionDao dao;
 

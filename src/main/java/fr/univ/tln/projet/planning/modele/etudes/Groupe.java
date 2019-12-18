@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class Groupe {
     private int idGroupe;
-    private String identifiant;
+    private int identifiant;
     private Section section;
     private static GroupeDao dao;
 

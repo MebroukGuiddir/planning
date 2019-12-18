@@ -11,6 +11,7 @@ import fr.univ.tln.projet.planning.modele.etudes.Promotion;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class PromotionDao extends Dao<Promotion> {
@@ -19,7 +20,7 @@ public class PromotionDao extends Dao<Promotion> {
      */
     public PromotionDao(DB bd) throws DaoException {
         super(bd);
-        if (!isTableExiste("module")) {
+        if (!isTableExiste("promotion")) {
             try (Connection connection = this.getConnection();
                  Statement statement = connection.createStatement()) {
                 statement.executeUpdate("CREATE TABLE promotion " +
@@ -37,9 +38,9 @@ public class PromotionDao extends Dao<Promotion> {
      * @return true si l'objet existe en base, faux sinon
      * @throws DaoException
      */
-    public boolean isExisteDansLaBase(String identifiant,String formation,String niveau) throws DaoException{
+    public boolean isExisteDansLaBase(String identifiant,int formation) throws DaoException{
         try {
-            trouver(identifiant,formation,niveau);
+            trouver(identifiant,formation);
             return true;
         }
         catch (ObjetInconnuDaoException exp) {
@@ -90,13 +91,12 @@ public class PromotionDao extends Dao<Promotion> {
         }
     }
 
-    public Promotion trouver(String annee,String formation,String niveau) throws DaoException {
+    public Promotion trouver(String annee,int formation) throws DaoException {
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM promotion p JOIN formation f ON p.id_formation=f.id_formation WHERE p.annee=? AND f.intitule=? AND f.niveau=? ")) {
+                     connection.prepareStatement("SELECT * FROM promotion  WHERE annee=? AND id_formation=?")) {
             statement.setString(1, annee);
-            statement.setString(1, formation);
-            statement.setString(1, niveau);
+            statement.setInt(2, formation);
             ResultSet rs = statement.executeQuery();
             if (!rs.next())
                 throw new ObjetInconnuDaoException("promotion inexistant : " + annee);
@@ -116,8 +116,15 @@ public class PromotionDao extends Dao<Promotion> {
 
 
 
-    public Promotion creer(String annee, String idFormation,String niveau) throws DaoException {
-        if (isExisteDansLaBase(annee,idFormation,niveau))
+    public Promotion creer(int  idFormation) throws DaoException {
+
+        Calendar calendar = Calendar.getInstance();
+        int annee=calendar.get(Calendar.YEAR);
+        if ( calendar.get( Calendar.MONTH )<=Calendar.AUGUST )
+            annee--;
+
+
+        if (isExisteDansLaBase(annee+"",idFormation))
             throw new ObjectExistDaoException("exist déja: " + annee);
         else {
             FormationDao dao = new FormationDao(this.getDb());
@@ -125,9 +132,9 @@ public class PromotionDao extends Dao<Promotion> {
             Formation formation = dao.trouver(idFormation);
             try (Connection connection = this.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO module (annee,id_formation) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, annee);
-                statement.setInt(3, formation.getIdFormation());
+                         "INSERT INTO promotion (annee,id_formation) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, annee+"");
+                statement.setInt(2, formation.getIdFormation());
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
 
@@ -141,16 +148,14 @@ public class PromotionDao extends Dao<Promotion> {
         }
     }
 
-    public List<Promotion> selectionner(String idFormation) throws DaoException {
+    public List<Promotion> selectionner(int idFormation) throws DaoException {
         List<Promotion> promotions = new ArrayList();
-        FormationDao dao = new FormationDao(this.getDb());
-        Formation.setDao(dao);
-        Formation formation = dao.trouver(idFormation);
+
         try (Connection connection = this.getConnection();
 
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM  promotion  WHERE id_formation=?")) {
-            statement.setInt(1, formation.getIdFormation());
+            statement.setInt(1, idFormation);
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {

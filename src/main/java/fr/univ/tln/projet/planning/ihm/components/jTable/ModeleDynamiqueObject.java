@@ -42,10 +42,14 @@ public abstract class ModeleDynamiqueObject <T> extends AbstractTableModel {
 
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
+    public void removeAllRows() {
+        this.rows.clear();
+        fireTableDataChanged();
+
+    }
     public void updateModel(Collection<T> rows){
         this.rows.clear();
         this.rows.addAll(rows);
-        System.out.println(this.rows);
         fireTableDataChanged();
     }
 }

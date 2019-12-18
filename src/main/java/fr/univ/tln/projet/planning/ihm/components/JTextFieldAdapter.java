@@ -1,8 +1,10 @@
 package fr.univ.tln.projet.planning.ihm.components;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import java.awt.*;
-
+@Getter
 public class JTextFieldAdapter extends JPanel {
       private JTextField textField;
       private JLabel errorLabel;

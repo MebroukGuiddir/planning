@@ -13,6 +13,7 @@ import lombok.ToString;
 public class Module {
     private int idModule;
     private String libelle;
+    private String identifiant;
     private Formation formation;
     private static ModuleDao dao;
 

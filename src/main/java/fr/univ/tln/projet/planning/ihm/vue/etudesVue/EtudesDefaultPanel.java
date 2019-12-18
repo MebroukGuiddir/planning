@@ -5,8 +5,8 @@ import fr.univ.tln.projet.planning.controler.AbstractControler;
 
 import fr.univ.tln.projet.planning.ihm.components.JButtonAdapter;
 
+import fr.univ.tln.projet.planning.ihm.components.JTextFieldAdapter;
 import lombok.Getter;
-import org.json.simple.JSONObject;
 
 
 import javax.swing.*;
@@ -14,14 +14,15 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Pattern;
+
 @Getter
 public class EtudesDefaultPanel extends JPanel {
     private AbstractControler controler;
     private  JLabel title;
     private  JComboBox comboBox ;
     private JComboBox niveau;
-    private JTextField textField;
+    private JTextFieldAdapter identifiant;
+    private JTextFieldAdapter module;
     private JButtonAdapter button;
     public EtudesDefaultPanel(AbstractControler controler){
         super();
@@ -32,12 +33,13 @@ public class EtudesDefaultPanel extends JPanel {
         Border blackline = BorderFactory.createTitledBorder("Ajouter");
         this.setBorder(blackline);
         title=new JLabel("");
-        title.setFont(new Font("Arial", Font.ITALIC, 12));
+        title.setFont(new Font("Arial", Font.BOLD, 12));
+        title.setForeground(new Color(157, 43, 64));
         title.setSize(100, 20);
         title.setPreferredSize(new Dimension(100, 20));
         title.setAlignmentX( Component.RIGHT_ALIGNMENT );
-
-        comboBox =new JComboBox(new String[]{"Domaine","Formation","Promotion","Section","Groupe"});
+        title.setVisible(false);
+        comboBox =new JComboBox(new String[]{"Domaine","Formation","Promotion","Section","Groupe","Module"});
         comboBox.setFont(new Font("Arial", Font.BOLD, 13));
         comboBox.setSize(150, 25);
         comboBox.setPreferredSize(new Dimension(150, 25));
@@ -50,29 +52,35 @@ public class EtudesDefaultPanel extends JPanel {
         niveau.setOpaque(false);
         niveau.setVisible(false);
 
-        textField=new JTextField();
-        textField.setFont(new Font("Arial",Font.PLAIN, 12));
-        textField.setSize(200, 30);
-        textField.setPreferredSize(new Dimension(200,30));
-        textField.setMaximumSize(new Dimension(200,30));
-        textField.setMinimumSize(new Dimension(200,30));
-        textField.setAlignmentX( Component.RIGHT_ALIGNMENT);
+        identifiant =new JTextFieldAdapter("identifiant","");
+        module=new JTextFieldAdapter("module","");
+        module.setVisible(false);
         button=new JButtonAdapter("créer");
 
         comboBox.addActionListener((new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 switch (comboBox.getSelectedItem().toString()){
-                    case "Domaine":niveau.setVisible(false);textField.setVisible(true);title.setText("");break;
-                    case "Formation":niveau.setVisible(true);textField.setVisible(true);title.setText("*Sélectionner un domaine d'etudes dans la liste des domaines");break;
-                    case "Promotion":niveau.setVisible(false);textField.setVisible(false);title.setText("*Sélectionner une formation dans la liste des formation");break;
-                    case "Section":niveau.setVisible(false);textField.setVisible(false);title.setText("*Sélectionner une promotion");break;
-                    case "Groupe":niveau.setVisible(false);textField.setVisible(false);title.setText("*Sélectionner une section");break;
+                    case "Domaine":niveau.setVisible(false);module.setVisible(false);
+                        identifiant.setVisible(true);title.setText("");break;
+                    case "Formation":niveau.setVisible(true);module.setVisible(false);
+                        identifiant.setVisible(true);title.setText("*Sélectionner un domaine d'etudes dans la liste des domaines");break;
+                    case "Promotion":niveau.setVisible(false);module.setVisible(false);
+                        identifiant.setVisible(false);title.setText("*Sélectionner une formation dans la liste des formation");break;
+                    case "Section":niveau.setVisible(false);module.setVisible(false);
+                        identifiant.setVisible(false);title.setText("*Sélectionner une promotion");break;
+                    case "Groupe":niveau.setVisible(false);module.setVisible(false);
+                        identifiant.setVisible(false);title.setText("*Sélectionner une formation");break;
+                    case "Module":niveau.setVisible(false);
+                        identifiant.setVisible(true);
+                        module.setVisible(true);
+                        title.setText("*Sélectionner une section");break;
                 }
             }}));
 
         JPanel panel=new JPanel();
         panel.add(comboBox);
-        panel.add(textField);
+        panel.add(identifiant);
+        panel.add(module);
         panel.add(niveau);
         panel.add(button);
         this.add(panel);

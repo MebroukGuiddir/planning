@@ -130,6 +130,7 @@ public class FormationDao extends Dao<Formation> {
                         Formation.builder()
                                 .idFormation(rs.getInt("id_formation"))
                                 .intitule(rs.getString("intitule"))
+                                .niveau(rs.getString("niveau"))
                                 .build()
                 );
 

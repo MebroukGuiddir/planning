@@ -41,12 +41,12 @@ public interface IAdmin {
     List<Domaine>  selectDomaines();
     JSONObject addFormation(String intitule,String niveau,int domaine);
     List<Formation>  selectFormations(int domaine);
-    JSONObject addModule(String libelle,String formation);
-    List<Module>  selectModules(String formation);
-    JSONObject addPromotion(String annee,String formation,String niveau);
-    List<Promotion>  selectPromotions(String formation);
-    JSONObject addSection(String identifiant,String promotion);
-    List<Section>  selectSections(String promotion);
-    JSONObject addGroupe(String identifiant,String section);
-    List<Groupe>  selectGroupes(String section);
+    JSONObject addModule(String identifiant,String libelle,int formation);
+    List<Module>  selectModules(int formation);
+    JSONObject addPromotion(int formation);
+    List<Promotion>  selectPromotions(int formation);
+    JSONObject addSection(int promotion);
+    List<Section>  selectSections(int promotion);
+    JSONObject addGroupe(int section);
+    List<Groupe>  selectGroupes(int section);
 }

@@ -1,6 +1,5 @@
 package fr.univ.tln.projet.planning.ihm.components.jTable;
 
-import fr.univ.tln.projet.planning.modele.etudes.Domaine;
 import fr.univ.tln.projet.planning.modele.etudes.Groupe;
 
 public class JTableGroupe extends ModeleDynamiqueObject  {
@@ -11,6 +10,6 @@ public class JTableGroupe extends ModeleDynamiqueObject  {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return ((Groupe) rows.get(rowIndex)).getIdentifiant();
+        return "G"+((Groupe) rows.get(rowIndex)).getIdentifiant();
     }
 }

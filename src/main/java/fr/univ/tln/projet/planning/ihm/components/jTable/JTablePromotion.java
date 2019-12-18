@@ -10,6 +10,7 @@ public class JTablePromotion extends ModeleDynamiqueObject  {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return ((Promotion) rows.get(rowIndex)).getAnnee();
+        String year=((Promotion) rows.get(rowIndex)).getAnnee();
+        return year+"-"+ (Integer.valueOf(year)+1);
     }
 }

@@ -25,7 +25,7 @@ public class SectionDao extends Dao<Section> {
                  Statement statement = connection.createStatement()) {
                 statement.executeUpdate("CREATE TABLE section " +
                         "(id_section SERIAL  PRIMARY KEY," +
-                        "identifiant VARCHAR (50) , " +
+                        "identifiant INTEGER , " +
                         "id_promotion INTEGER , FOREIGN KEY (id_promotion) REFERENCES  promotion (id_promotion))");
 
             } catch (SQLException exp) {
@@ -49,7 +49,7 @@ public class SectionDao extends Dao<Section> {
                 Promotion.setDao(dao);
                 return Section.builder()
                         .idSection(rs.getInt("id_section"))
-                        .identifiant(rs.getString("identifiant"))
+                        .identifiant(rs.getInt("identifiant"))
                         .promotion(dao.trouver(rs.getInt("id_promotion")))
                         .build();
             }
@@ -62,7 +62,7 @@ public class SectionDao extends Dao<Section> {
     public Section trouver(String identifiant) throws DaoException {
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM module WHERE identifiant=?")) {
+                     connection.prepareStatement("SELECT * FROM section WHERE identifiant=?")) {
             statement.setString(1, identifiant);
 
             ResultSet rs = statement.executeQuery();
@@ -73,7 +73,7 @@ public class SectionDao extends Dao<Section> {
                 Promotion.setDao(dao);
                 return Section.builder()
                         .idSection(rs.getInt("id_section"))
-                        .identifiant(rs.getString("identifiant"))
+                        .identifiant(rs.getInt("identifiant"))
                         .promotion(dao.trouver(rs.getInt("id_promotion")))
                         .build();
             }
@@ -83,18 +83,22 @@ public class SectionDao extends Dao<Section> {
     }
 
 
-    public Section creer(String identifiant, String idPromotion) throws DaoException {
-        if (isExisteDansLaBase(identifiant))
-            throw new ObjectExistDaoException("exist déja: " + identifiant);
-        else {
-            PromotionDao dao = new PromotionDao(this.getDb());
-            Promotion.setDao(dao);
-            Promotion promotion = dao.trouver(idPromotion);
+    public Section creer(int idPromotion) throws DaoException {
+        int identifiant=0;
+        try (Connection connection = this.getConnection();
+        PreparedStatement statement = connection.prepareStatement(
+                "SELECT COUNT(*) AS rowcount FROM  section WHERE id_promotion=? ")) {
+            statement.setInt(1, idPromotion);
+            ResultSet rs = statement.executeQuery();;
+            rs.next();
+            identifiant=rs.getInt("rowcount")+1;
+        }catch (SQLException exp){throw new DaoException(exp);}
+
             try (Connection connection = this.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO promotion (indentifiant,id_promotion) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, identifiant);
-                statement.setInt(3, promotion.getIdPromotion());
+                PreparedStatement statement = connection.prepareStatement(
+                         "INSERT INTO section (identifiant,id_promotion) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, identifiant);
+                statement.setInt(2, idPromotion);
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
 
@@ -104,27 +108,22 @@ public class SectionDao extends Dao<Section> {
             } catch (SQLException exp) {
                 throw new DaoException(exp);
             }
-
-        }
     }
 
-    public List<Section> selectionner(String idPromotion) throws DaoException {
+    public List<Section> selectionner(int idPromotion) throws DaoException {
         List<Section> sections = new ArrayList();
-        PromotionDao dao = new PromotionDao(this.getDb());
-        Promotion.setDao(dao);
-        Promotion promotion = dao.trouver(idPromotion);
         try (Connection connection = this.getConnection();
 
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM  section  WHERE id_promotion=?")) {
-            statement.setInt(1, promotion.getIdPromotion());
+            statement.setInt(1, idPromotion);
             ResultSet rs = statement.executeQuery();
-
+            logger.info("selected");
             while (rs.next()) {
                 sections.add(
                         Section.builder()
                                 .idSection(rs.getInt("id_section"))
-                                .identifiant(rs.getString("identifiant"))
+                                .identifiant(rs.getInt("identifiant"))
                                 .build()
                 );
 

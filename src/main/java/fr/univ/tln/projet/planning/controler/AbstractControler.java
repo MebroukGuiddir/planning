@@ -3,6 +3,7 @@ package fr.univ.tln.projet.planning.controler;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 
 import fr.univ.tln.projet.planning.modele.etudes.*;
+import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
 import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
@@ -108,24 +109,27 @@ public abstract class AbstractControler {
     public List<Formation> selectFormations(int domaine){
         return   adminModele.selectFormations( domaine);
     }
-    public JSONObject  addPromotion(String annee,String formation,String niveau){
-        return adminModele.addPromotion(annee,formation,niveau);
+    public JSONObject  addPromotion(int formation){
+        return adminModele.addPromotion(formation);
     }
-    public List<Promotion> selectPromotions(String formation){
+    public List<Promotion> selectPromotions(int formation){
         return   adminModele.selectPromotions( formation);
     }
-    public JSONObject  addSection(String identifiant,String promotion){
-        return adminModele.addSection(identifiant,promotion);
+    public JSONObject  addSection(int promotion){
+        return adminModele.addSection(promotion);
     }
-    public List<Section> selectSections(String promotion){
+    public List<Section> selectSections(int promotion){
         return   adminModele.selectSections( promotion);
     }
-    public JSONObject  addGroupe(String identifiant,String section){
-        return adminModele.addGroupe(identifiant,section);
+    public JSONObject  addGroupe(int section){
+        return adminModele.addGroupe(section);
     }
-    public List<Groupe> selectGroupes(String section){
+    public List<Groupe> selectGroupes(int section){
         return   adminModele.selectGroupes( section);
     }
-
+    public JSONObject addModule(String identifiant,String libelle,int formation){
+        return adminModele.addModule(identifiant,libelle,formation);
+    }
+    public  List<Module>  selectModules(int formation){return adminModele.selectModules(formation); }
 
 }

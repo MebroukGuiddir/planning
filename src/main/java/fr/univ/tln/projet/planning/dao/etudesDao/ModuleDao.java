@@ -24,6 +24,7 @@ public class ModuleDao extends Dao<Module> {
                  Statement statement = connection.createStatement()) {
                 statement.executeUpdate("CREATE TABLE module " +
                         "(id_module  SERIAL  PRIMARY KEY," +
+                        "identifiant VARCHAR (50) , " +
                         "libelle VARCHAR (50) , " +
                         "id_formation INTEGER , FOREIGN KEY (id_formation) REFERENCES  formation (id_formation))");
 
@@ -49,6 +50,7 @@ public class ModuleDao extends Dao<Module> {
                 return Module.builder()
                         .idModule(rs.getInt("id_module"))
                         .libelle(rs.getString("libelle"))
+                        .identifiant(rs.getString("identifiant"))
                         .formation(dao.trouver(rs.getInt("id_formation")))
                         .build();
             }
@@ -58,21 +60,22 @@ public class ModuleDao extends Dao<Module> {
     }
 
     @Override
-    public Module trouver(String libelle) throws DaoException {
+    public Module trouver(String identifiant) throws DaoException {
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM module WHERE libelle=?")) {
-            statement.setString(1, libelle);
+                     connection.prepareStatement("SELECT * FROM module WHERE identifiant=?")) {
+            statement.setString(1, identifiant);
 
             ResultSet rs = statement.executeQuery();
             if (!rs.next())
-                throw new ObjetInconnuDaoException("module inexistant : " + libelle);
+                throw new ObjetInconnuDaoException("module inexistant : " + identifiant);
             else
                 {   FormationDao dao = new FormationDao(this.getDb());
                     Formation.setDao(dao);
                     return Module.builder()
                             .idModule(rs.getInt("id_module"))
                             .libelle(rs.getString("libelle"))
+                            .identifiant(rs.getString("identifiant"))
                             .formation(dao.trouver(rs.getInt("id_formation")))
                             .build();
                 }
@@ -82,21 +85,19 @@ public class ModuleDao extends Dao<Module> {
     }
 
 
-    public Module creer(String libelle, String idFormation) throws DaoException {
-        if (isExisteDansLaBase(libelle))
+    public Module creer(String identifiant,String libelle,int idFormation) throws DaoException {
+        if (isExisteDansLaBase(identifiant))
             throw new ObjectExistDaoException("exist déja: " + libelle);
         else {
-            FormationDao dao = new FormationDao(this.getDb());
-            Formation.setDao(dao);
-            Formation formation = dao.trouver(idFormation);
+
             try (Connection connection = this.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO module (libelle,id_formation) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, libelle);
-                statement.setInt(3, formation.getIdFormation());
+                       "INSERT INTO module (identifiant,libelle,id_formation) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1,identifiant);
+                statement.setString(2, libelle );
+                statement.setInt(3, idFormation);
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
-
                 if (rs.next()) {
                     return trouver(rs.getInt(1));
                 } else throw new InsertDaoException("insert exception");
@@ -107,22 +108,21 @@ public class ModuleDao extends Dao<Module> {
         }
     }
 
-    public List<Module> selectionner(String idFormation) throws DaoException {
+    public List<Module> selectionner(int idFormation) throws DaoException {
         List<Module> modules = new ArrayList();
-        FormationDao dao = new FormationDao(this.getDb());
-        Formation.setDao(dao);
-        Formation formation = dao.trouver(idFormation);
+
         try (Connection connection = this.getConnection();
 
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM  module  WHERE id_formation=?")) {
-            statement.setInt(1, formation.getIdFormation());
+            statement.setInt(1, idFormation);
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
                 modules.add(
                         Module.builder()
                                 .idModule(rs.getInt("id_module"))
+                                .identifiant(rs.getString("identifiant"))
                                 .libelle(rs.getString("libelle"))
                                 .build()
                 );

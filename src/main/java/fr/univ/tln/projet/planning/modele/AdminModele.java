@@ -484,74 +484,39 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return null;
     }
 
-    @Override
-    public JSONObject addModule(String libelle, String formation) {
-        JSONObject message = new JSONObject();
-        logger.info("Model/ add  Module");
-        try {
-            ModuleDao dao = new ModuleDao(bd);
-            Module.setDao(dao);
-            dao.creer(libelle,formation);
-            message.put("status", "Success");
-            message.put("message", "Module ajouté");
-            message.put("code", 200);
-            return message;
-
-
-        }catch (ObjectExistDaoException e){
-            message.put("status", "insert error");
-            message.put("message", "ce Module existe deja");
-            message.put("code", 500);
-            return message;
-        } catch (DaoException e) {
-            message.put("status", "Internal server error");
-            message.put("message", "Internal server error");
-            message.put("code", 500);
-            return message;
-        }
-    }
 
     @Override
-    public List<Module> selectModules(String formation) {
-        try {
-            ModuleDao dao = new  ModuleDao(bd);
-            Module.setDao(dao);
-            return dao.selectionner(formation);
-        } catch (DaoException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public JSONObject addPromotion(String annee, String formation,String niveau) {
+    public JSONObject addPromotion(int formation) {
         JSONObject message = new JSONObject();
         logger.info("Model/ add  Module");
         try {
             PromotionDao dao = new PromotionDao(bd);
             Promotion.setDao(dao);
-            dao.creer(annee,formation,niveau);
+            dao.creer(formation);
             message.put("status", "Success");
             message.put("message", "Module ajouté");
             message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.PROMOTION).type(Changement.Type.ADD).build());
             return message;
 
 
         }catch (ObjectExistDaoException e){
             message.put("status", "insert error");
-            message.put("message", "ce Module existe deja");
+            message.put("message", "La promotion pour l'année universitaire en cours est dejà crée");
             message.put("code", 500);
+            e.printStackTrace();
             return message;
         } catch (DaoException e) {
             message.put("status", "Internal server error");
             message.put("message", "Internal server error");
             message.put("code", 500);
+            e.printStackTrace();
             return message;
         }
     }
 
     @Override
-    public List<Promotion> selectPromotions(String formation) {
+    public List<Promotion> selectPromotions(int formation) {
         try {
             PromotionDao dao = new  PromotionDao(bd);
             Promotion.setDao(dao);
@@ -563,26 +528,63 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     }
 
     @Override
-    public JSONObject addSection(String identifiant, String promotion) {
+    public JSONObject addSection(int promotion) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Section");
+        try {
+            SectionDao dao = new SectionDao(bd);
+            Section.setDao(dao);
+            dao.creer(promotion);
+            message.put("status", "Success");
+            message.put("message", "Section added");
+            message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.SECTION).type(Changement.Type.ADD).build());
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "cette section existe deja");
+            message.put("code", 500);
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+
+
+    }
+
+    @Override
+    public List<Section> selectSections(int promotion) {
+        try {
+            SectionDao dao = new SectionDao(bd);
+            Section.setDao(dao);
+            logger.info("Model/selected");
+
+            return dao.selectionner(promotion);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public List<Section> selectSections(String promotion) {
-        return null;
-    }
-
-    @Override
-    public JSONObject addGroupe(String identifiant, String promotion) {
+    public JSONObject addGroupe(int promotion) {
         JSONObject message = new JSONObject();
         logger.info("Model/ add  Groupe");
         try {
             GroupeDao dao = new GroupeDao(bd);
             Groupe.setDao(dao);
-            dao.creer(identifiant,promotion);
+            dao.creer(promotion);
             message.put("status", "Success");
             message.put("message", "Groupe ajouté");
             message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.GROUPE).type(Changement.Type.ADD).build());
+
             return message;
 
 
@@ -595,12 +597,13 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("status", "Internal server error");
             message.put("message", "Internal server error");
             message.put("code", 500);
+            e.printStackTrace();
             return message;
         }
     }
 
     @Override
-    public List<Groupe> selectGroupes(String section) {
+    public List<Groupe> selectGroupes(int section) {
 
             try {
                 GroupeDao dao = new  GroupeDao(bd);
@@ -611,7 +614,47 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             }
             return null;
     }
+    @Override
+    public JSONObject addModule(String identifiant,String libelle,int formation) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Module");
+        try {
+            ModuleDao dao = new ModuleDao(bd);
+            Module.setDao(dao);
+            dao.creer(identifiant,libelle,formation);
+            message.put("status", "Success");
+            message.put("message", "Module ajouté");
+            message.put("code", 200);
+            notifyObserver(message,Changement.builder().section( Changement.Section.MODULE).type(Changement.Type.ADD).build());
+            return message;
 
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "ce module existe  dejà");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+
+    @Override
+    public List<Module> selectModules(int formation) {
+        try {
+            ModuleDao dao = new  ModuleDao(bd);
+            Module.setDao(dao);
+            return dao.selectionner(formation);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     //Implémentation du pattern observer
     public void addObserver(Observer obs) {

@@ -4,10 +4,8 @@ import fr.univ.tln.projet.planning.dao.DB;
 import fr.univ.tln.projet.planning.dao.Dao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.exception.dao.InsertDaoException;
-import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
 import fr.univ.tln.projet.planning.modele.etudes.Groupe;
-import fr.univ.tln.projet.planning.modele.etudes.Promotion;
 import fr.univ.tln.projet.planning.modele.etudes.Section;
 
 import java.sql.*;
@@ -25,7 +23,7 @@ public class GroupeDao extends Dao<Groupe> {
                  Statement statement = connection.createStatement()) {
                 statement.executeUpdate("CREATE TABLE groupe " +
                         "(id_groupe SERIAL  PRIMARY KEY," +
-                        "identifiant VARCHAR (50) , " +
+                        "identifiant INTEGER , " +
                         "id_section INTEGER , FOREIGN KEY (id_section) REFERENCES  section (id_section))");
 
             } catch (SQLException exp) {
@@ -49,7 +47,7 @@ public class GroupeDao extends Dao<Groupe> {
                 Section.setDao(dao);
                 return Groupe.builder()
                         .idGroupe(rs.getInt("id_groupe"))
-                        .identifiant(rs.getString("identifiant"))
+                        .identifiant(rs.getInt("identifiant"))
                         .section(dao.trouver(rs.getInt("id_section")))
                         .build();
             }
@@ -57,13 +55,11 @@ public class GroupeDao extends Dao<Groupe> {
             throw new DaoException(exp);
         }
     }
-
-    @Override
     public Groupe trouver(String identifiant) throws DaoException {
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM groupe WHERE identifiant=?")) {
-            statement.setString(1, identifiant);
+                     connection.prepareStatement("SELECT * FROM groupe WHERE id_groupe=?")) {
+            statement.setInt(1, Integer.valueOf(identifiant));
 
             ResultSet rs = statement.executeQuery();
             if (!rs.next())
@@ -74,7 +70,7 @@ public class GroupeDao extends Dao<Groupe> {
                 Section.setDao(dao);
                 return Groupe.builder()
                         .idGroupe(rs.getInt("id_groupe"))
-                        .identifiant(rs.getString("identifiant"))
+                        .identifiant(rs.getInt("identifiant"))
                         .section(dao.trouver(rs.getInt("id_section")))
                         .build();
             }
@@ -84,18 +80,23 @@ public class GroupeDao extends Dao<Groupe> {
     }
 
 
-    public Groupe creer(String identifiant, String idPromotion) throws DaoException {
-        if (isExisteDansLaBase(identifiant))
-            throw new ObjectExistDaoException("exist déja: " + identifiant);
-        else {
-            PromotionDao dao = new PromotionDao(this.getDb());
-            Promotion.setDao(dao);
-            Promotion promotion = dao.trouver(idPromotion);
+
+    public Groupe creer(int idSection) throws DaoException {
+            int identifiant=0;
             try (Connection connection = this.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO groupe (indentifiant,id_promotion) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, identifiant);
-                statement.setInt(3, promotion.getIdPromotion());
+                         "SELECT COUNT(*) AS rowcount FROM  groupe WHERE id_section=? ")) {
+                statement.setInt(1, idSection);
+                ResultSet rs = statement.executeQuery();;
+                rs.next();
+                identifiant=rs.getInt("rowcount")+1;
+            }catch (SQLException exp){throw new DaoException(exp);}
+
+            try (Connection connection = this.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(
+                         "INSERT INTO groupe (identifiant,id_section) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, identifiant);
+                statement.setInt(2, idSection);
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
 
@@ -107,25 +108,22 @@ public class GroupeDao extends Dao<Groupe> {
             }
 
         }
-    }
 
-    public List<Groupe> selectionner(String idPromotion) throws DaoException {
+
+    public List<Groupe> selectionner(int idPromotion) throws DaoException {
         List<Groupe> groupes = new ArrayList();
-        PromotionDao dao = new PromotionDao(this.getDb());
-        Promotion.setDao(dao);
-        Promotion promotion = dao.trouver(idPromotion);
         try (Connection connection = this.getConnection();
 
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM  groupe  WHERE id_promotion=?")) {
-            statement.setInt(1, promotion.getIdPromotion());
+                     connection.prepareStatement("SELECT * FROM  groupe  WHERE id_section=?")) {
+            statement.setInt(1,idPromotion);
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
                 groupes.add(
                         Groupe.builder()
                                 .idGroupe(rs.getInt("id_groupe"))
-                                .identifiant(rs.getString("identifiant"))
+                                .identifiant(rs.getInt("identifiant"))
                                 .build()
                 );
 
