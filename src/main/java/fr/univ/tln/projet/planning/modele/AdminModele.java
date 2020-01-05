@@ -73,6 +73,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("status","Internal Server Error ");
             message.put("message", "Internal Server Error ");
             message.put("code", 500 );
+            exception.printStackTrace();
             return message;
         }
     }
@@ -152,6 +153,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("status","Internal Server Error ");
             message.put("message", "Internal Server Error ");
             message.put("code", 500 );
+            exception.printStackTrace();
             return message;
         }
 
@@ -266,6 +268,66 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("nom",admin.getNom());
             message.put("prenom",admin.getPrenom());
             message.put("user","Admin");
+            message.put("code", 200 );
+
+            return message;
+        }catch ( ObjetInconnuDaoException exe){
+            logger.info("user not found :username ="+username);
+            message.put("status","Authentification");
+            message.put("message", "Invalid token gives");
+            message.put("code", 401 );
+            return message;
+        }catch (DaoException exe){
+            logger.info("Login/Internal Server Error");
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+    }
+    @Override
+    public JSONObject enseignantLogin(String username, String password) {
+        JSONObject message = new JSONObject();
+        try {
+            EnseignantDao dao = new EnseignantDao(bd);
+            Enseignant.setDao(dao);
+
+            Enseignant enseignant= dao.trouver(username,password);
+            message.put("status","Authentification");
+            message.put("message", "Login success");
+            message.put("nom",enseignant.getNom());
+            message.put("prenom",enseignant.getPrenom());
+            message.put("user","Enseignant");
+            message.put("code", 200 );
+
+            return message;
+        }catch ( ObjetInconnuDaoException exe){
+            logger.info("user not found :username ="+username);
+            message.put("status","Authentification");
+            message.put("message", "Invalid token gives");
+            message.put("code", 401 );
+            return message;
+        }catch (DaoException exe){
+            logger.info("Login/Internal Server Error");
+            message.put("status","Internal Server Error ");
+            message.put("message", "Internal Server Error ");
+            message.put("code", 500 );
+            return message;
+        }
+    }
+    @Override
+    public JSONObject responsableLogin(String username, String password) {
+        JSONObject message = new JSONObject();
+        try {
+           ResponsableDao dao = new ResponsableDao(bd);
+           Responsable.setDao(dao);
+
+            Responsable responsable= dao.trouver(username,password);
+            message.put("status","Authentification");
+            message.put("message", "Login success");
+            message.put("nom",responsable.getNom());
+            message.put("prenom",responsable.getPrenom());
+            message.put("user","Responsable");
             message.put("code", 200 );
 
             return message;
@@ -656,6 +718,135 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         return null;
     }
 
+    @Override
+    public List<Module> selectModules() {
+        try {
+            ModuleDao dao = new  ModuleDao(bd);
+            Module.setDao(dao);
+            return dao.selectionner();
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @Override
+    public List<Cours>  selectCours(int idEnseignant){
+        try {
+            CoursDao dao = new  CoursDao(bd);
+            Cours.setDao(dao);
+            return dao.selectionner(idEnseignant);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject addCours(int idEnseignant, int idModule) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add  Module");
+        try {
+            CoursDao dao = new CoursDao(bd);
+            Cours.setDao(dao);
+            dao.creer(idEnseignant,idModule);
+            message.put("status", "Success");
+            message.put("message", "Affecté");
+            message.put("code", 200);
+            return message;
+
+
+        }catch (ObjectExistDaoException e){
+            message.put("status", "insert error");
+            message.put("message", "dejà Affecté");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+
+    @Override
+    public Utilisateur getUser(int idUser){
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+            return dao.trouver(idUser);
+        } catch (DaoException e) {
+
+        }
+        try {
+            AdminDao dao = new AdminDao(bd);
+            Admin.setDao(dao);
+            return dao.trouver(idUser);
+        } catch (DaoException e) {
+
+        }
+        try {
+            EnseignantDao dao = new EnseignantDao(bd);
+            Enseignant.setDao(dao);
+            return dao.trouver(idUser);
+        } catch (DaoException e) {
+
+        }
+        try {
+            ResponsableDao dao = new ResponsableDao(bd);
+            Responsable.setDao(dao);
+            return dao.trouver(idUser);
+        } catch (DaoException e) {
+
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject setEtudiant(Etudiant etudiant, int idFormation, int idSection, int idGroupe) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ set Etudiant");
+        try {
+            EtudiantDao dao = new EtudiantDao(bd);
+            Etudiant.setDao(dao);
+            dao.mettreAJour(etudiant,idFormation,idSection,idGroupe);
+            message.put("status", "Success");
+            message.put("message", "Affectation effectué");
+            message.put("code", 200);
+            return message;
+
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+
+    @Override
+    public JSONObject setResponsable(Responsable responsable, int idFormation) {
+        JSONObject message = new JSONObject();
+        logger.info("Model/ set Responsable");
+        try {
+            ResponsableDao dao = new ResponsableDao(bd);
+            Responsable.setDao(dao);
+            dao.mettreAJour(responsable,idFormation);
+            message.put("status", "Success");
+            message.put("message", "Affectation effectué");
+            message.put("code", 200);
+            return message;
+
+        } catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+
     //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);
@@ -671,4 +862,5 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     public void removeObserver() {
         listObserver = new ArrayList<Observer>();
     }
+
 }

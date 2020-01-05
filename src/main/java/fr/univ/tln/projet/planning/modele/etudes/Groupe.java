@@ -20,4 +20,7 @@ public class Groupe {
     public static void setDao(GroupeDao dao) {
         Groupe.dao=dao;
     }
+    public String toString(){
+        return identifiant+"";
+    }
 }

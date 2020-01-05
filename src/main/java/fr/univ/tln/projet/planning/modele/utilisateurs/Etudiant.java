@@ -2,6 +2,9 @@ package fr.univ.tln.projet.planning.modele.utilisateurs;
 
 import fr.univ.tln.projet.planning.dao.utilisateursDao.EtudiantDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
+import fr.univ.tln.projet.planning.modele.etudes.Groupe;
+import fr.univ.tln.projet.planning.modele.etudes.Promotion;
+import fr.univ.tln.projet.planning.modele.etudes.Section;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -13,6 +16,22 @@ import java.util.Date;
 public class Etudiant extends Utilisateur {
     private static EtudiantDao dao;
     private int idEtudiant;
+
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
+    public void setGroupe(Groupe groupe) {
+        this.groupe = groupe;
+    }
+
+    private Promotion promotion;
+    private Section section;
+    private Groupe groupe;
     public static void setDao(EtudiantDao dao) {
         Etudiant.dao=dao;
     }

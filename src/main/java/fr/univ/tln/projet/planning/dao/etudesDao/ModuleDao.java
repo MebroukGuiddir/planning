@@ -135,6 +135,32 @@ public class ModuleDao extends Dao<Module> {
         }
 
     }
+    public List<Module> selectionner() throws DaoException {
+        List<Module> modules = new ArrayList();
+
+        try (Connection connection = this.getConnection();
+
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM  module  WHERE true")) {
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                modules.add(
+                        Module.builder()
+                                .idModule(rs.getInt("id_module"))
+                                .identifiant(rs.getString("identifiant"))
+                                .libelle(rs.getString("libelle"))
+                                .build()
+                );
+
+            }
+            return modules;
+
+        } catch (SQLException exp) {
+            throw new DaoException(exp);
+        }
+
+    }
 
     /**
      * suppression d'un Module en base

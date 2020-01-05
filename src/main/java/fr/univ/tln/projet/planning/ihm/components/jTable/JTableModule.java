@@ -10,8 +10,8 @@ public class JTableModule  extends ModeleDynamiqueObject  {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex){
-            case 0:return ((Module) rows.get(rowIndex)).getIdentifiant();
-            case 1:return ((Module) rows.get(rowIndex)).getLibelle();
+            case 0:return ((Module) rows.get(rowIndex)).getLibelle();
+            case 1:return ((Module) rows.get(rowIndex)).getIdentifiant();
             default:return  "";
         }
 

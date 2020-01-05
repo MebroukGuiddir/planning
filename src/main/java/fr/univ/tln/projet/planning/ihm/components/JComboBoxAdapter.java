@@ -35,4 +35,8 @@ public class JComboBoxAdapter extends  JPanel {
     public String getSelectedItem(){
       return   comboBox.getSelectedItem().toString();
     }
+
+    public JComboBox getComboBox() {
+        return comboBox;
+    }
 }

@@ -1,9 +1,13 @@
 package fr.univ.tln.projet.planning.dao.utilisateursDao;
 
 import fr.univ.tln.projet.planning.dao.DB;
+import fr.univ.tln.projet.planning.dao.etudesDao.GroupeDao;
+import fr.univ.tln.projet.planning.dao.etudesDao.PromotionDao;
+import fr.univ.tln.projet.planning.dao.etudesDao.SectionDao;
 import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.exception.dao.InsertDaoException;
 import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
+import fr.univ.tln.projet.planning.modele.etudes.Promotion;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 
@@ -25,7 +29,12 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
                  Statement statement = connection.createStatement( )) {
                 statement.executeUpdate("CREATE TABLE etudiant " +
                         "(id_etudiant  SERIAL  PRIMARY KEY," +
-                        "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user) ON DELETE CASCADE)");
+                        "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user) ON DELETE CASCADE," +
+                        "id_promotion INTEGER NULL , FOREIGN KEY (id_promotion) REFERENCES  promotion (id_promotion) ON DELETE CASCADE,"+
+                        "id_section INTEGER NULL, FOREIGN KEY (id_section) REFERENCES  section (id_section) ON DELETE CASCADE,"+
+                        "id_groupe INTEGER NULL, FOREIGN KEY (id_groupe) REFERENCES  groupe (id_groupe) ON DELETE CASCADE)"
+
+                );
 
             }
             catch (SQLException exp) {throw new DaoException(exp);}
@@ -46,7 +55,7 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
 
             try (Connection connection = this.getConnection();
                  PreparedStatement statement = connection.prepareStatement(
-                         "INSERT INTO etudiant (id_user) VALUES (?)",Statement.RETURN_GENERATED_KEYS )){
+                         "INSERT INTO etudiant (id_user,id_promotion,id_section,id_groupe) VALUES (?,NULL,NULL,NULL)",Statement.RETURN_GENERATED_KEYS )){
                 statement.setInt(1, utilisateur.getIdUser());
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
@@ -74,6 +83,8 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
             while (rs.next()) {
                 listEtudiant.add(
                         Etudiant.builder()
+                                .idUser(rs.getInt("id_user"))
+                                .idEtudiant(rs.getInt("id_etudiant"))
                                 .nom(rs.getString("nom"))
                                 .prenom(rs.getString("prenom"))
                                 .email(rs.getString("email"))
@@ -101,7 +112,53 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
             if (!rs.next( ))
                 throw new ObjetInconnuDaoException("Etudiant inexistante id_user: "+username);
 
-            else return Etudiant.builder()
+            else {
+                Etudiant etudiant= Etudiant.builder()
+                        .idEtudiant(rs.getInt("id_etudiant"))
+                        .idUser(rs.getInt("id_user"))
+                        .email(rs.getString("email"))
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .nom(rs.getString("nom"))
+                        .prenom(rs.getString("prenom"))
+                        .adresse(rs.getString("adresse"))
+                        .mobile(rs.getString("mobile"))
+                        .dateNaissance(rs.getDate("dateNaissance"))
+                        .genre(rs.getString("genre"))
+                        .dateCreation( rs.getDate("dateCreation"))
+                        .build();
+                if(rs.getInt("id_promotion")!= 0)
+                {PromotionDao promotionDao = new PromotionDao(this.getDb());
+                    etudiant.setPromotion(promotionDao.trouver(rs.getInt("id_promotion")));
+                }
+                if(rs.getInt("id_section")!= 0)
+                {SectionDao sectionDao=new SectionDao(this.getDb());
+                    etudiant.setSection(sectionDao.trouver(rs.getInt("id_section")));
+                }
+                if(rs.getInt("id_groupe")!= 0)
+                { GroupeDao groupeDao=new GroupeDao(this.getDb());
+                    etudiant.setGroupe(groupeDao.trouver(rs.getInt("id_groupe")));
+                }
+
+
+                return etudiant;
+            }
+        }
+        catch (SQLException exp) {throw new DaoException(exp);}
+    }
+
+    public   Etudiant trouver(int id_user ) throws DaoException{
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE e.id_user=?")){
+             statement.setInt(1, id_user);
+            ResultSet rs= statement.executeQuery( );
+
+            if (!rs.next( ))
+             throw new ObjetInconnuDaoException("Etudiant inexistante id_user: "+id_user);
+
+            else {
+               Etudiant etudiant= Etudiant.builder()
                     .idEtudiant(rs.getInt("id_etudiant"))
                     .idUser(rs.getInt("id_user"))
                     .email(rs.getString("email"))
@@ -115,25 +172,23 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
                     .genre(rs.getString("genre"))
                     .dateCreation( rs.getDate("dateCreation"))
                     .build();
+                       if(rs.getInt("id_promotion")!= 0)
+                       {PromotionDao promotionDao = new PromotionDao(this.getDb());
+                       etudiant.setPromotion(promotionDao.trouver(rs.getInt("id_promotion")));
+                       }
+                    if(rs.getInt("id_section")!= 0)
+                    {SectionDao sectionDao=new SectionDao(this.getDb());
+                        etudiant.setSection(sectionDao.trouver(rs.getInt("id_section")));
+                    }
+                    if(rs.getInt("id_groupe")!= 0)
+                    { GroupeDao groupeDao=new GroupeDao(this.getDb());
+                        etudiant.setGroupe(groupeDao.trouver(rs.getInt("id_groupe")));
+                    }
 
-        }
-        catch (SQLException exp) {throw new DaoException(exp);}
-    }
 
-    public   Etudiant trouver(int id_user ) throws DaoException{
-        try (Connection connection = this.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE e.id_user=u.id_user")){
+               return etudiant;
+            }
 
-            ResultSet rs= statement.executeQuery( );
-
-            if (!rs.next( ))
-             throw new ObjetInconnuDaoException("Etudiant inexistante id_user: "+id_user);
-
-            else return Etudiant.builder()
-                    .idEtudiant(rs.getInt("id_etudiant"))
-                    .idUser(rs.getInt("id_user"))
-                    .build();
 
         }
         catch (SQLException exp) {throw new DaoException(exp);}
@@ -154,6 +209,49 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
         }
         catch (SQLException exp) {throw new DaoException(exp);}
     }*/
+
+    /**
+     * Mettre à jour
+     * @param etudiant
+     * @param idFormation
+     * @throws DaoException
+     */
+    public void mettreAJour(Etudiant etudiant,int idFormation,int idSection,int idGroupe) throws DaoException{
+        if(idFormation!=-1){
+            PromotionDao promotionDao = new PromotionDao(this.getDb());
+            int idPromotion=promotionDao.selectionner(idFormation).get(0).getIdPromotion();
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE etudiant SET id_promotion=?  WHERE id_etudiant=?")){
+            statement.setInt(1,idPromotion);
+            statement.setInt(2, etudiant.getIdEtudiant());
+
+            statement.executeUpdate();
+        }
+        catch (SQLException exp) {throw new DaoException(exp);}}
+        if(idSection!=-1){
+            try (Connection connection = this.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(
+                         "UPDATE etudiant SET id_section=? WHERE id_etudiant=?")){
+                statement.setInt(1, idSection);
+                statement.setInt(2, etudiant.getIdEtudiant());
+
+                statement.executeUpdate();
+            }
+            catch (SQLException exp) {throw new DaoException(exp);}}
+        if(idGroupe!=-1){
+            try (Connection connection = this.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(
+                         "UPDATE etudiant SET id_groupe=?  WHERE id_etudiant=?")){
+                statement.setInt(1, idGroupe);
+                statement.setInt(2, etudiant.getIdEtudiant());
+
+                statement.executeUpdate();
+            }
+            catch (SQLException exp) {throw new DaoException(exp);}
+        }
+    }
+
 
     /**
      * suppression d'un Etudiant en base

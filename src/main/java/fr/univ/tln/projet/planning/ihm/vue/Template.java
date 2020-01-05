@@ -15,7 +15,6 @@ public class Template extends JPanel {
         this.add(footer,BorderLayout.SOUTH);
     }
     public JPanel setTemplateVue(Color color){
-
         this.setOpaque(true);
         this.setBackground(color);
         return this;

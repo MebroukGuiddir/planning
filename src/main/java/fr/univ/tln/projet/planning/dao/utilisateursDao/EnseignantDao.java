@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
-import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 
 
@@ -27,7 +26,7 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
             try (Connection connection = this.getConnection();
                  Statement statement = connection.createStatement( )) {
                 statement.executeUpdate("CREATE TABLE enseignant " +
-                        "(id_responsable  SERIAL  PRIMARY KEY," +
+                        "(id_enseignant  SERIAL  PRIMARY KEY," +
                         "id_user INTEGER , FOREIGN KEY (id_user) REFERENCES  utilisateur (id_user) ON DELETE CASCADE)");
 
             }
@@ -61,7 +60,7 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
-                return trouver(rs.getInt(1));
+                return trouver(rs.getInt("id_user"));
             }else throw new InsertDaoException("insert exception");
         }
         catch (SQLException exp) {throw new DaoException(exp);}
@@ -83,7 +82,9 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
 
             while (rs.next()) {
                 listEnseignant.add(
-                        Responsable.builder()
+                        Enseignant.builder()
+                                .idEnseignant(rs.getInt("id_enseignant"))
+                                .idUser(rs.getInt("id_user"))
                                 .nom(rs.getString("nom"))
                                 .prenom(rs.getString("prenom"))
                                 .email(rs.getString("email"))
@@ -105,8 +106,8 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
     public   Enseignant trouver(int id_user ) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE e.id_user=u.id_user")){
-
+                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE e.id_user=?")){
+            statement.setInt(1, id_user);
             ResultSet rs= statement.executeQuery( );
 
             if (!rs.next( ))
@@ -115,13 +116,47 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
             else return Enseignant.builder()
                     .idEnseignant(rs.getInt("id_enseignant"))
                     .idUser(rs.getInt("id_user"))
+                    .nom(rs.getString("nom"))
+                    .prenom(rs.getString("prenom"))
+                    .email(rs.getString("email"))
+                    .username(rs.getString("username"))
+                    .dateNaissance(rs.getDate("dateNaissance"))
+                    .adresse(rs.getString("adresse"))
                     .build();
 
         }
         catch (SQLException exp) {throw new DaoException(exp);}
     }
 
+    public   Enseignant trouver(String username,String password ) throws DaoException{
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE u.username=? AND u.password=? AND e.id_user=u.id_user")){
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet rs= statement.executeQuery( );
 
+            if (!rs.next( ))
+                throw new ObjetInconnuDaoException("Enseignant inexistant id_user: "+username);
+
+            else return  Enseignant.builder()
+                    .idEnseignant(rs.getInt("id_enseignant"))
+                    .idUser(rs.getInt("id_user"))
+                    .email(rs.getString("email"))
+                    .username(rs.getString("username"))
+                    .password(rs.getString("password"))
+                    .nom(rs.getString("nom"))
+                    .prenom(rs.getString("prenom"))
+                    .adresse(rs.getString("adresse"))
+                    .mobile(rs.getString("mobile"))
+                    .dateNaissance(rs.getDate("dateNaissance"))
+                    .genre(rs.getString("genre"))
+                    .dateCreation( rs.getDate("dateCreation"))
+                    .build();
+
+        }
+        catch (SQLException exp) {throw new DaoException(exp);}
+    }
 
 
 

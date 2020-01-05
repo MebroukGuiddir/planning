@@ -77,6 +77,8 @@ public class AdminDao extends UtilisateurDao <Admin> {
             while (rs.next()) {
                 listAdmin.add(
                         Admin.builder()
+                                .idUser(rs.getInt("id_user"))
+                                .idAdmin(rs.getInt("id_admin"))
                                 .nom(rs.getString("nom"))
                                 .prenom(rs.getString("prenom"))
                                 .email(rs.getString("email"))
@@ -126,8 +128,8 @@ public class AdminDao extends UtilisateurDao <Admin> {
     public   Admin trouver(int id_user ) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM admin a, utilisateur u WHERE a.id_user=u.id_user")){
-
+                     connection.prepareStatement("SELECT * FROM admin a, utilisateur u WHERE a.id_user=?")){
+            statement.setInt(1, id_user);
             ResultSet rs= statement.executeQuery( );
 
             if (!rs.next( ))
@@ -136,6 +138,16 @@ public class AdminDao extends UtilisateurDao <Admin> {
             else return Admin.builder()
                     .idAdmin(rs.getInt("id_admin"))
                     .idUser(rs.getInt("id_user"))
+                    .email(rs.getString("email"))
+                    .username(rs.getString("username"))
+                    .password(rs.getString("password"))
+                    .nom(rs.getString("nom"))
+                    .prenom(rs.getString("prenom"))
+                    .adresse(rs.getString("adresse"))
+                    .mobile(rs.getString("mobile"))
+                    .dateNaissance(rs.getDate("dateNaissance"))
+                    .genre(rs.getString("genre"))
+                    .dateCreation( rs.getDate("dateCreation"))
                     .build();
 
         }

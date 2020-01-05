@@ -6,6 +6,8 @@ import fr.univ.tln.projet.planning.modele.etudes.*;
 import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
 import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 
@@ -55,7 +57,8 @@ public abstract class AbstractControler {
         switch (status){
             case "Etudiant":return adminModele.etudiantLogin(username ,Password);
             case "Admin":return  adminModele.adminLogin(username ,Password);
-            //TODO set return object
+            case "Enseignant":return  adminModele.enseignantLogin(username ,Password);
+            case "Responsable":return  adminModele.responsableLogin(username ,Password);
             default:return new JSONObject();
         }
 
@@ -131,5 +134,20 @@ public abstract class AbstractControler {
         return adminModele.addModule(identifiant,libelle,formation);
     }
     public  List<Module>  selectModules(int formation){return adminModele.selectModules(formation); }
-
+    public  List<Module>  selectModules(){return adminModele.selectModules(); }
+    public  List<Cours>  selectCours(int idEnseignant){
+        return  adminModele.selectCours(idEnseignant);
+    }
+    public JSONObject addCours(int idEnseignant, int idModule){
+        return adminModele.addCours(idEnseignant,idModule);
+    }
+    public  Utilisateur getUser(int idUser){
+        return adminModele.getUser(idUser);
+    }
+    public JSONObject setEtudiant(Etudiant etudiant, int idFormation, int idSection, int idGroupe){
+        return adminModele.setEtudiant(etudiant,idFormation,idSection,idGroupe);
+    }
+    public JSONObject setResponsable(Responsable responsable, int idFormation){
+        return adminModele.setResponsable(responsable,idFormation);
+    }
 }

@@ -4,12 +4,22 @@ import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.ihm.components.jTable.ModeleDynamiqueObject;
 import fr.univ.tln.projet.planning.ihm.components.SearchBox;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EnseignantAffecterVue;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudiantAffecterVue;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.ResponsableAffecterVue;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ListUserVue extends JPanel implements Observer {
     private ModeleDynamiqueUtilisateur modele = new ModeleDynamiqueUtilisateur(new String []{"Prénom", "Nom", "Email","Login","Adresse","Date Naissance"});
@@ -29,6 +39,7 @@ public class ListUserVue extends JPanel implements Observer {
         recherche.getSearchB().addActionListener(actionEvent -> {
             modele.updateModel(  this.controler.selectUsers(recherche.getSearchable().getText(),status.getSelectedItem().toString()));
         });
+
         JPanel boutons = new JPanel();
         JButton supprimer=new JButton("Supprimer");
         supprimer.addActionListener((actionEvent) -> {
@@ -58,6 +69,32 @@ public class ListUserVue extends JPanel implements Observer {
 
         list = new JTable(modele);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                JTable table =(JTable) mouseEvent.getSource();
+                Point point = mouseEvent.getPoint();
+                int row = table.rowAtPoint(point);
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                    System.out.println(((Utilisateur)(modele.getRow(list.getSelectedRow()))).getIdUser());
+                    Utilisateur user=controler.getUser( ((Utilisateur)(modele.getRow(list.getSelectedRow()))).getIdUser());
+
+                    JPanel AffecterVue=null;
+
+                    if(user instanceof Etudiant)
+                        AffecterVue=new EtudiantAffecterVue(controler,user);
+                    else if(user instanceof Responsable)
+                        AffecterVue=new ResponsableAffecterVue(controler,user);
+                    else if(user instanceof Enseignant)
+                        AffecterVue=new EnseignantAffecterVue(controler,user);
+                    JFrame addUserFrame=new JFrame();
+                    addUserFrame.setSize(new Dimension(1000,500));
+                    addUserFrame.setContentPane(AffecterVue);
+                    addUserFrame.setVisible(true);
+
+                }
+            }
+        });
+
         JScrollPane scrollPane = new JScrollPane(list);
         this.add(boutons);
          this.add(jHeader);

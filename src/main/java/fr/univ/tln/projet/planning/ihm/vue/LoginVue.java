@@ -161,7 +161,10 @@ public class LoginVue extends JFrame{
                 jMenu.addItem("Gérer les comptes", p1).addItem("Gérer les infrastructures", p2).addItem("Gérer les études", p3);
                 break;
 
-            case "Enseignant":break;
+            case "Enseignant":
+                JPanel p4 = new  PlanningEnseignantVue(controler);
+                jMenu.addItem("planning", p4);
+                break;
             case "Responsable":break;
 
         }

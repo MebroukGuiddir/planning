@@ -20,4 +20,7 @@ public class Section {
     public static void setDao(SectionDao dao) {
         Section.dao=dao;
     }
+    public String toString(){
+        return identifiant+"";
+    }
 }
