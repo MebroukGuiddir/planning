@@ -15,7 +15,22 @@ import java.util.Properties;
 public class JdatePickerAdapter extends JPanel {
     private JLabel label;
     private JDatePickerImpl jDatePicker;
-
+    public JdatePickerAdapter(String label,int year,int month,int day){
+        super();
+        UtilDateModel model = new UtilDateModel();
+        model.setDate(year,month-1,day);
+        model.setSelected(true);
+        Properties properties  = new Properties();
+        properties.put("text.day", "Day");
+        properties.put("text.month", "Month");
+        properties.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model,properties);
+        jDatePicker = new JDatePickerImpl(datePanel,new DateLabelFormatter());
+        jDatePicker.setSize(200, 30);
+        jDatePicker.setPreferredSize(new Dimension(200,30));
+        jDatePicker.setMinimumSize(new Dimension(200,30));
+        this.add(jDatePicker);
+    }
     public JdatePickerAdapter(String label){
         super();
         this.label = new JLabel(label);

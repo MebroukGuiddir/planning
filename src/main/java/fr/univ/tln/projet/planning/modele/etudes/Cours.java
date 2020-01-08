@@ -10,7 +10,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-@ToString
+
 public class Cours {
     private int idCours;
     private Enseignant enseignant;
@@ -18,5 +18,10 @@ public class Cours {
     private static CoursDao dao;
     public static void setDao(CoursDao dao) {
         Cours.dao=dao;
+    }
+
+    @Override
+    public String toString() {
+        return  module.getIdentifiant() +"   "+module.getLibelle();
     }
 }

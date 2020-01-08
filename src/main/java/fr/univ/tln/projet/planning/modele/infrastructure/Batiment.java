@@ -17,4 +17,8 @@ public class Batiment {
     public static void setDao(BatimentDao dao) {
         Batiment.dao=dao;
     }
+    @Override
+    public String toString() {
+        return  identifiant ;
+    }
 }

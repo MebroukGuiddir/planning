@@ -3,7 +3,6 @@ package fr.univ.tln.projet.planning.ihm.vue.etudesVue;
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.ihm.components.JButtonAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JLabelAdapter;
-import fr.univ.tln.projet.planning.modele.AdminModele;
 import fr.univ.tln.projet.planning.modele.etudes.Domaine;
 import fr.univ.tln.projet.planning.modele.etudes.Formation;
 import fr.univ.tln.projet.planning.modele.etudes.Groupe;

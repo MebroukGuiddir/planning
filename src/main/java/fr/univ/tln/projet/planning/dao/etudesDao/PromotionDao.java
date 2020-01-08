@@ -65,6 +65,30 @@ public class PromotionDao extends Dao<Promotion> {
             throw new DaoException(exp);
         }
     }
+    public Promotion trouverParCours(int idCours) throws DaoException {
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM promotion WHERE id_promotion " +
+                             "IN(SELECT id_promotion FROM formation WHERE id_formation " +
+                             "IN(SELECT id_formation FROM module WHERE id_module " +
+                             "IN(SELECT id_module FROM cours WHERE id_cours=?))) ")) {
+            statement.setInt(1, idCours);
+
+            ResultSet rs = statement.executeQuery();
+            if (!rs.next())
+                throw new ObjetInconnuDaoException("inexistant");
+
+            else{ FormationDao dao = new FormationDao(this.getDb());
+                  Formation.setDao(dao);
+                return Promotion.builder()
+                    .idPromotion(rs.getInt("id_promotion"))
+                    .annee(rs.getString("annee"))
+                    .formation(dao.trouver(rs.getInt("id_formation")))
+                    .build();}
+        } catch (SQLException exp) {
+            throw new DaoException(exp);
+        }
+    }
 
     @Override
     public Promotion trouver(String annee) throws DaoException {

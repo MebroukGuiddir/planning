@@ -7,9 +7,7 @@ import fr.univ.tln.projet.planning.dao.infrastractureDao.BatimentDao;
 import fr.univ.tln.projet.planning.dao.infrastractureDao.SalleDao;
 import fr.univ.tln.projet.planning.dao.utilisateursDao.*;
 import fr.univ.tln.projet.planning.dao.utilisateursDao.EnseignantDao;
-import fr.univ.tln.projet.planning.exception.dao.DaoException;
-import fr.univ.tln.projet.planning.exception.dao.ObjectExistDaoException;
-import fr.univ.tln.projet.planning.exception.dao.ObjetInconnuDaoException;
+import fr.univ.tln.projet.planning.exception.dao.*;
 import fr.univ.tln.projet.planning.modele.etudes.*;
 import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.infrastructure.Batiment;
@@ -21,6 +19,7 @@ import lombok.Getter;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -239,6 +238,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("message", "Login success");
             message.put("nom",etudiant.getNom());
             message.put("prenom",etudiant.getPrenom());
+            message.put("id",etudiant.getIdUser());
             message.put("user","Etudiant");
             message.put("code", 200 );
             return message;
@@ -267,6 +267,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("message", "Login success");
             message.put("nom",admin.getNom());
             message.put("prenom",admin.getPrenom());
+            message.put("id",admin.getIdUser());
             message.put("user","Admin");
             message.put("code", 200 );
 
@@ -297,6 +298,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("message", "Login success");
             message.put("nom",enseignant.getNom());
             message.put("prenom",enseignant.getPrenom());
+            message.put("id",enseignant.getIdUser());
             message.put("user","Enseignant");
             message.put("code", 200 );
 
@@ -327,6 +329,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             message.put("message", "Login success");
             message.put("nom",responsable.getNom());
             message.put("prenom",responsable.getPrenom());
+            message.put("id",responsable.getIdUser());
             message.put("user","Responsable");
             message.put("code", 200 );
 
@@ -847,6 +850,47 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         }
     }
 
+
+    @Override
+    public JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant){
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add seance");
+        try {
+            SeanceDao dao = new SeanceDao(bd);
+            Seance.setDao(dao);
+            dao.creer(heureDebut, heureFin, date, idSalle, idCours,idEnseignant);
+            message.put("status", "Success");
+            message.put("message", "Seance Ajouté,En attente de validation");
+            message.put("code", 200);
+            return message;
+
+        } catch (EnseignantNonLibreException e) {
+            message.put("status", "error");
+            message.put("message", "Enseignant non libre sur ce creneau");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        } catch (PromotionNonLibreException e) {
+            message.put("status", "error");
+            message.put("message", "Promotion non libre sur ce creneau");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }catch (SalleNonLibreException e) {
+            message.put("status", "error");
+            message.put("message", "Salle non libre sur ce creneau");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+        catch (DaoException e) {
+            message.put("status", "Internal server error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
     //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);

@@ -3,6 +3,7 @@ package fr.univ.tln.projet.planning.modele.infrastructure;
 import fr.univ.tln.projet.planning.dao.infrastractureDao.SalleDao;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Setter
@@ -16,5 +17,10 @@ public class Salle{
 
     public static void setDao(SalleDao dao) {
         Salle.dao=dao;
+    }
+
+    @Override
+    public String toString() {
+        return  identifiant ;
     }
 }

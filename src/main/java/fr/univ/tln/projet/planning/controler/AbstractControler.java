@@ -11,6 +11,7 @@ import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -150,4 +151,8 @@ public abstract class AbstractControler {
     public JSONObject setResponsable(Responsable responsable, int idFormation){
         return adminModele.setResponsable(responsable,idFormation);
     }
+
+   public  JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant){
+        return adminModele.addSeance(heureDebut,heureFin,date,idSalle,idCours,idEnseignant);
+   }
 }

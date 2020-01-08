@@ -84,7 +84,6 @@ public class FormationDao extends Dao<Formation> {
     }
 
     /**
-     * g
      * Création d'une formation en base de données
      *
      * @param intitule

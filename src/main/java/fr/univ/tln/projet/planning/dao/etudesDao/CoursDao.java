@@ -81,6 +81,7 @@ public class CoursDao extends Dao<Cours> {
         }
     }
 
+
     public List<Cours> selectionner(int idEnseignant) throws DaoException {
         List<Cours> cours = new ArrayList();
 

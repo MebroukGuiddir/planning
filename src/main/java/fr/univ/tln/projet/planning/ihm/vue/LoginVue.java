@@ -11,6 +11,8 @@ import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomainePanel;
 
 import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudesVue;
 import fr.univ.tln.projet.planning.modele.AdminModele;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 import java.awt.*;
 import java.util.regex.Pattern;
@@ -106,7 +108,7 @@ public class LoginVue extends JFrame{
                     case 500:
                         JOptionPane.showMessageDialog(new JFrame(),response.get("message"), (String) response.get("status"), JOptionPane.ERROR_MESSAGE);break;
                     case 200:
-                        login((String) response.get("nom"),(String)response.get("prenom"),(String)response.get("user"));
+                        login(controler.getUser((int)response.get("id")) ,(String)response.get("user"));
                 }
             }
 
@@ -133,7 +135,7 @@ public class LoginVue extends JFrame{
         this.setVisible(true);
     }
 
-    private void login(String nom, String prenom, String user) {
+    private void login(Utilisateur utilisateur, String typeCompte) {
         final JFrame frame = new JFrame ("Hyper-Planning");
         //fixe screen size
         frame.setResizable(false);
@@ -143,14 +145,14 @@ public class LoginVue extends JFrame{
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
         //header
-        JHeaderPanel jHeaderPanel=new JHeaderPanel(new JLabel(java.time.LocalDate.now().toString()),new JLabel(nom+"  "+prenom));
+        JHeaderPanel jHeaderPanel=new JHeaderPanel(new JLabel(java.time.LocalDate.now().toString()),new JLabel(utilisateur.getNom()+"  "+utilisateur.getPrenom()));
         jHeaderPanel.setJHeaderVue(width-100,50,new Color(7, 21, 23));
         //footer
         JFooter jFooter= new JFooter();
         jFooter.setJFooterVue(width-100,50,new Color(7, 21, 23));
         //body
         JMenu jMenu = new JMenu();
-        switch (user) {
+        switch (typeCompte) {
             case "Etudiant":break;
             case "Admin":
                 JPanel p1 = new ListUserVue(controler);
@@ -162,13 +164,14 @@ public class LoginVue extends JFrame{
                 break;
 
             case "Enseignant":
-                JPanel p4 = new  PlanningEnseignantVue(controler);
+
+                JPanel p4 = new  PlanningEnseignantVue(controler,(Enseignant) utilisateur);
                 jMenu.addItem("planning", p4);
                 break;
             case "Responsable":break;
 
         }
-        jMenu.setUser("Espace "+user);
+        jMenu.setUser("Espace "+typeCompte);
         jMenu.setJMenuVue(width - 100, height - 100, new Color(10, 24, 65));
 
         Template template=new Template(jHeaderPanel,jMenu, jFooter );

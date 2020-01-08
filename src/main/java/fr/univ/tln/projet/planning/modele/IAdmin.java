@@ -11,6 +11,7 @@ import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 
 import java.text.Format;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -60,5 +61,7 @@ public interface IAdmin {
     Utilisateur getUser(int idUser);
     JSONObject setEtudiant(Etudiant etudiant,int idFormation,int idSection,int idGroupe);
     JSONObject setResponsable(Responsable responsable, int idFormation);
+
+    JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant);
 
 }
