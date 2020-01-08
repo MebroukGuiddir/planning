@@ -168,4 +168,7 @@ public abstract class AbstractControler {
     public  List<Seance> selectSeancesResponsable(int idUser,Date date ,int periode){
         return adminModele.selectionnerSeancesResponsable(idUser, date, periode);
     }
+    public  List<Seance> selectSeancesEtudiant(int idUser,Date date ,int periode){
+         return  adminModele.selectionnerSeancesEtudiant(idUser, date, periode);
+    }
 }

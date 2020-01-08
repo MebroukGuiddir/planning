@@ -57,10 +57,13 @@ public class PromotionDao extends Dao<Promotion> {
             if (!rs.next())
                 throw new ObjetInconnuDaoException("inexistant : " + id);
 
-            else return Promotion.builder()
-                    .idPromotion(rs.getInt("id_promotion"))
-                    .annee(rs.getString("annee"))
-                    .build();
+            else{ FormationDao dao = new FormationDao(this.getDb());
+                Formation.setDao(dao);
+                return Promotion.builder()
+                        .idPromotion(rs.getInt("id_promotion"))
+                        .annee(rs.getString("annee"))
+                        .formation(dao.trouver(rs.getInt("id_formation")))
+                        .build();}
         } catch (SQLException exp) {
             throw new DaoException(exp);
         }

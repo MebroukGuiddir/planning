@@ -66,4 +66,5 @@ public interface IAdmin {
     JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant);
     List<Seance>  selectSeanceEnseignant(int idEnseignant,Date date ,int periode);
     List<Seance> selectionnerSeancesResponsable(int idUser,Date date ,int periode);
+    List<Seance> selectionnerSeancesEtudiant(int idUser,Date date ,int periode);
 }

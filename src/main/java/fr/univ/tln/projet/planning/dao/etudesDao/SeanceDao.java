@@ -3,13 +3,16 @@ package fr.univ.tln.projet.planning.dao.etudesDao;
 import fr.univ.tln.projet.planning.dao.DB;
 import fr.univ.tln.projet.planning.dao.Dao;
 import fr.univ.tln.projet.planning.dao.infrastractureDao.SalleDao;
+import fr.univ.tln.projet.planning.dao.utilisateursDao.EtudiantDao;
 import fr.univ.tln.projet.planning.dao.utilisateursDao.ResponsableDao;
 import fr.univ.tln.projet.planning.exception.dao.*;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudiantAffecterVue;
 import fr.univ.tln.projet.planning.modele.etudes.Cours;
 import fr.univ.tln.projet.planning.modele.etudes.Promotion;
 import fr.univ.tln.projet.planning.modele.etudes.Seance;
 import fr.univ.tln.projet.planning.modele.etudes.Section;
 import fr.univ.tln.projet.planning.modele.infrastructure.Salle;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 
 
@@ -250,10 +253,10 @@ public class SeanceDao extends Dao {
         Calendar c = Calendar.getInstance();
 
         c.setTime(date);
-        if(periode==0) c.add(Calendar.DATE, 1);
-        else if(periode==1) c.add(Calendar.DATE, 5);
-        else if(periode==2) c.add(Calendar.MONTH, 1);
-        else if(periode==3) c.add(Calendar.YEAR, 1);
+        if (periode == 0) c.add(Calendar.DATE, 1);
+        else if (periode == 1) c.add(Calendar.DATE, 5);
+        else if (periode == 2) c.add(Calendar.MONTH, 1);
+        else if (periode == 3) c.add(Calendar.YEAR, 1);
         // manipulate date
 
         ResponsableDao responsableDao = new ResponsableDao(this.getDb());
@@ -267,8 +270,8 @@ public class SeanceDao extends Dao {
                              "IN(SELECT id_module from module WHERE id_formation=?)) " +
                              "ORDER BY date ASC, start_at ASC")) {
 
-            statement.setDate(1,new java.sql.Date(date.getTime()));
-            statement.setDate(2,new java.sql.Date(c.getTime().getTime()));
+            statement.setDate(1, new java.sql.Date(date.getTime()));
+            statement.setDate(2, new java.sql.Date(c.getTime().getTime()));
             statement.setInt(3, responsableDao.trouver(idUser).getFormation().getIdFormation());
             ResultSet rs = statement.executeQuery();
             logger.info("selected");
@@ -298,6 +301,61 @@ public class SeanceDao extends Dao {
         }
 
     }
+        public List<Seance> selectionnerSeancesEtudiant(int idUser,int periode,java.util.Date date) throws DaoException
+        {
+            List<Seance> seances = new ArrayList();
+            Calendar c = Calendar.getInstance();
+
+            c.setTime(date);
+            if (periode == 0) c.add(Calendar.DATE, 1);
+            else if (periode == 1) c.add(Calendar.DATE, 5);
+            else if (periode == 2) c.add(Calendar.MONTH, 1);
+            else if (periode == 3) c.add(Calendar.YEAR, 1);
+            // manipulate date
+
+            EtudiantDao etudiantDao = new EtudiantDao(this.getDb());
+            Etudiant.setDao(etudiantDao);
+
+            try (Connection connection = this.getConnection();
+
+                 PreparedStatement statement =
+                         connection.prepareStatement("SELECT * FROM  seance  WHERE date >= ? and date <= ? and (status=1 or status=0) and id_cours " +
+                                 "IN(SELECT id_cours from cours WHERE id_module " +
+                                 "IN(SELECT id_module from module WHERE id_formation=?)) " +
+                                 "ORDER BY date ASC, start_at ASC")) {
+
+                statement.setDate(1, new java.sql.Date(date.getTime()));
+                statement.setDate(2, new java.sql.Date(c.getTime().getTime()));
+                statement.setInt(3, etudiantDao.trouver(idUser).getPromotion().getFormation().getIdFormation());
+                ResultSet rs = statement.executeQuery();
+                logger.info("selected");
+                CoursDao coursDao = new CoursDao(this.getDb());
+                Cours.setDao(coursDao);
+                SalleDao salleDao = new SalleDao(this.getDb());
+                Salle.setDao(salleDao);
+                while (rs.next()) {
+                    seances.add(
+                            Seance.builder()
+                                    .idSeance(rs.getInt("id_seance"))
+                                    .date(rs.getDate("date"))
+                                    .status(rs.getInt("status"))
+                                    .heureDebut(rs.getTime("start_at").toLocalTime())
+                                    .heureFin(rs.getTime("end_at").toLocalTime())
+                                    .cours(coursDao.trouver(rs.getInt("id_cours")))
+                                    .salle(salleDao.trouver(rs.getInt("id_salle")))
+                                    .build()
+                    );
+
+
+                }
+                return seances;
+
+            } catch (SQLException exp) {
+                throw new DaoException(exp);
+            }
+        }
+
+
 
 }
 

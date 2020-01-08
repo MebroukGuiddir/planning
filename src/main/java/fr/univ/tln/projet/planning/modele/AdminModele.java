@@ -912,6 +912,16 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
         }
         return null;
     }
+    public  List<Seance> selectionnerSeancesEtudiant(int idUser,Date date ,int periode){
+        try {
+            SeanceDao dao = new  SeanceDao(bd);
+            Seance.setDao(dao);
+            return dao.selectionnerSeancesEtudiant(idUser,periode,date);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public JSONObject validerSeance(int idSeance,int status ){
         JSONObject message = new JSONObject();
         logger.info("Model/ valider seance");

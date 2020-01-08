@@ -10,8 +10,10 @@ import fr.univ.tln.projet.planning.ihm.panels.JMenu;
 import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomainePanel;
 
 import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudesVue;
+import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudiantVue;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
@@ -154,7 +156,9 @@ public class LoginVue extends JFrame{
         //body
         JMenu jMenu = new JMenu();
         switch (typeCompte) {
-            case "Etudiant":break;
+            case "Etudiant": JPanel p = new EtudiantVue(controler,(Etudiant) utilisateur);
+                jMenu.addItem("planning", p);
+                break;
             case "Admin":
                 JPanel p1 = new ListUserVue(controler);
                 JPanel p2 = new InfrastructuresVue(controler);

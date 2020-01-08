@@ -62,7 +62,7 @@ public class ResponsableDao extends UtilisateurDao <Responsable>{
                 statement.executeUpdate();
                 ResultSet rs = statement.getGeneratedKeys();
                 if (rs.next()) {
-                    return trouver(rs.getInt(1));
+                    return trouver(rs.getInt("id_user"));
                 }else throw new InsertDaoException("insert exception");
             }
             catch (SQLException exp) {throw new DaoException(exp);}
