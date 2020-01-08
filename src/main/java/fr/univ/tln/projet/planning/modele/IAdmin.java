@@ -61,7 +61,9 @@ public interface IAdmin {
     Utilisateur getUser(int idUser);
     JSONObject setEtudiant(Etudiant etudiant,int idFormation,int idSection,int idGroupe);
     JSONObject setResponsable(Responsable responsable, int idFormation);
-
+    JSONObject annulerSeance( int idSeance);
+    JSONObject validerSeance(int idSeance,int status );
     JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant);
-
+    List<Seance>  selectSeanceEnseignant(int idEnseignant,Date date ,int periode);
+    List<Seance> selectionnerSeancesResponsable(int idUser,Date date ,int periode);
 }

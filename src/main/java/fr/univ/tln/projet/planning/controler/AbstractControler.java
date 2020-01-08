@@ -155,4 +155,17 @@ public abstract class AbstractControler {
    public  JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant){
         return adminModele.addSeance(heureDebut,heureFin,date,idSalle,idCours,idEnseignant);
    }
+    public List<Seance>  selectSeanceEnseignant(int idEnseignant,Date date ,int periode){
+       return  adminModele.selectSeanceEnseignant(idEnseignant, date, periode);
+    }
+
+    public JSONObject annulerSeance( int idSeance){
+        return adminModele.annulerSeance(idSeance);
+    }
+    public JSONObject validerSeance(int idSeance,int status ){
+        return adminModele.validerSeance(idSeance, status);
+    }
+    public  List<Seance> selectSeancesResponsable(int idUser,Date date ,int periode){
+        return adminModele.selectionnerSeancesResponsable(idUser, date, periode);
+    }
 }

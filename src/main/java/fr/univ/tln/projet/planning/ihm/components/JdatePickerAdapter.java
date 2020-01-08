@@ -54,6 +54,12 @@ public class JdatePickerAdapter extends JPanel {
         System.out.println(selectedValue);
         return  selectedValue;
     }
+    public void setDate(int day){
+        this.jDatePicker.getModel().addDay(day);
+    }
+    public JDatePickerImpl getJDatePicker(){
+        return this.jDatePicker;
+    }
     public class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
 
         private String datePattern = "dd-MM-yyyy";

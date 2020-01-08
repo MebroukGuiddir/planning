@@ -12,6 +12,7 @@ import fr.univ.tln.projet.planning.ihm.vue.etudesVue.DomainePanel;
 import fr.univ.tln.projet.planning.ihm.vue.etudesVue.EtudesVue;
 import fr.univ.tln.projet.planning.modele.AdminModele;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
+import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 import java.awt.*;
@@ -168,7 +169,11 @@ public class LoginVue extends JFrame{
                 JPanel p4 = new  PlanningEnseignantVue(controler,(Enseignant) utilisateur);
                 jMenu.addItem("planning", p4);
                 break;
-            case "Responsable":break;
+            case "Responsable":
+
+                JPanel p5 = new ResponsableVue(controler,(Responsable) utilisateur);
+                jMenu.addItem("planning", p5);
+                break;
 
         }
         jMenu.setUser("Espace "+typeCompte);

@@ -45,10 +45,13 @@ public class SalleDao extends Dao<Salle> {
             if (!rs.next( ))
                 throw new ObjetInconnuDaoException("batiment inexistant : "+id);
 
-            else return Salle.builder()
+            else { BatimentDao batimentDao = new BatimentDao(this.getDb());
+                Batiment.setDao(batimentDao);
+                return Salle.builder()
                     .idSalle(rs.getInt("id_salle"))
                     .identifiant(rs.getString("identifiant"))
-                    .build();
+                    .batiment(batimentDao.trouver(rs.getInt("id_batiment")))
+                    .build();}
         }
         catch (SQLException exp) {throw new DaoException(exp);}
     }
@@ -63,10 +66,13 @@ public class SalleDao extends Dao<Salle> {
             if (!rs.next( ))
                 throw new ObjetInconnuDaoException("salle inexistante : "+identifiant);
 
-            else return Salle.builder()
-                    .idSalle(rs.getInt("id_salle"))
-                    .identifiant(rs.getString("identifiant"))
-                    .build();
+            else { BatimentDao batimentDao = new BatimentDao(this.getDb());
+                Batiment.setDao(batimentDao);
+                return Salle.builder()
+                        .idSalle(rs.getInt("id_salle"))
+                        .identifiant(rs.getString("identifiant"))
+                        .batiment(batimentDao.trouver(rs.getInt("id_batiment")))
+                        .build();}
         }
         catch (SQLException exp) {throw new DaoException(exp);}
     }

@@ -891,6 +891,68 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
             return message;
         }
     }
+    @Override
+    public List<Seance>  selectSeanceEnseignant(int idEnseignant,Date date ,int periode){
+        try {
+            SeanceDao dao = new  SeanceDao(bd);
+            Seance.setDao(dao);
+            return dao.selectionnerSeancesEnseignant(idEnseignant,periode,date);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public  List<Seance> selectionnerSeancesResponsable(int idUser,Date date ,int periode){
+        try {
+            SeanceDao dao = new  SeanceDao(bd);
+            Seance.setDao(dao);
+            return dao.selectionnerSeancesResponsable(idUser,periode,date);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public JSONObject validerSeance(int idSeance,int status ){
+        JSONObject message = new JSONObject();
+        logger.info("Model/ valider seance");
+        try {
+            SeanceDao dao = new SeanceDao(bd);
+            Seance.setDao(dao);
+            dao.validerSeance(idSeance,status);
+            message.put("status", "Success");
+            message.put("message", "Changement valider");
+            message.put("code", 200);
+            return message;
+
+        } catch (DaoException e) {
+            message.put("status", "error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+    public JSONObject annulerSeance( int idSeance){
+        JSONObject message = new JSONObject();
+        logger.info("Model/ add seance");
+        try {
+            SeanceDao dao = new SeanceDao(bd);
+            Seance.setDao(dao);
+            dao.annulerSeance(idSeance);
+            message.put("status", "Success");
+            message.put("message", "Séance Annulé , En Attente de validation");
+            message.put("code", 200);
+            return message;
+
+        } catch (DaoException e) {
+            message.put("status", "error");
+            message.put("message", "Internal server error");
+            message.put("code", 500);
+            e.printStackTrace();
+            return message;
+        }
+    }
+
     //Implémentation du pattern observer
     public void addObserver(Observer obs) {
         this.listObserver.add(obs);
