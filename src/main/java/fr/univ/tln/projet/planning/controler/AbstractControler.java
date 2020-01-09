@@ -1,6 +1,6 @@
 package fr.univ.tln.projet.planning.controler;
 
-import fr.univ.tln.projet.planning.modele.AdminModele;
+import fr.univ.tln.projet.planning.modele.ModeleClass;
 
 import fr.univ.tln.projet.planning.modele.etudes.*;
 import fr.univ.tln.projet.planning.modele.etudes.Module;
@@ -18,20 +18,20 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public abstract class AbstractControler {
-    protected AdminModele adminModele;
-    private static Logger logger = Logger.getLogger(AdminModele.class.getName());
-    public AbstractControler(AdminModele adminModele){
-    this.adminModele=adminModele;
+    protected ModeleClass modeleClass;
+    private static Logger logger = Logger.getLogger(ModeleClass.class.getName());
+    public AbstractControler(ModeleClass modeleClass){
+    this.modeleClass = modeleClass;
 
     }
     abstract void control();
     public JSONObject controlerAddUser(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile, String status)   {
       logger.info(status);
       switch (status){
-          case "Etudiant": return adminModele.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
-          case "Enseignant":return adminModele.addEnseignant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
-          case "Responsable":return adminModele.addResponsable(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
-          case "Admin":return adminModele.addAdmin(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Etudiant": return modeleClass.addEtudiant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Enseignant":return modeleClass.addEnseignant(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Responsable":return modeleClass.addResponsable(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
+          case "Admin":return modeleClass.addAdmin(nom,prenom,email, password,username, birthday,genre,adresse,mobile);
           default: {JSONObject message=new JSONObject();
                     message.put("status","Internal Server Error ");
                     message.put("message", "Internal Server Error ");
@@ -45,10 +45,10 @@ public abstract class AbstractControler {
     public List<Utilisateur> selectUsers(String motif,String status){
         List<Utilisateur> list ;
        switch (status){
-           case "Etudiant": list = adminModele.selectEtudiants(motif);break;
-           case "Admin": list = adminModele.selectAdmins(motif);break;
-           case "Enseignant": list = adminModele.selectEnseignants(motif);break;
-           case "Responsable": list = adminModele.selectResponsables(motif);break;
+           case "Etudiant": list = modeleClass.selectEtudiants(motif);break;
+           case "Admin": list = modeleClass.selectAdmins(motif);break;
+           case "Enseignant": list = modeleClass.selectEnseignants(motif);break;
+           case "Responsable": list = modeleClass.selectResponsables(motif);break;
            default:list=new ArrayList<>();
        }
         return list;
@@ -56,10 +56,10 @@ public abstract class AbstractControler {
 
     public JSONObject  controlerLogin(String username ,String Password,String status){
         switch (status){
-            case "Etudiant":return adminModele.etudiantLogin(username ,Password);
-            case "Admin":return  adminModele.adminLogin(username ,Password);
-            case "Enseignant":return  adminModele.enseignantLogin(username ,Password);
-            case "Responsable":return  adminModele.responsableLogin(username ,Password);
+            case "Etudiant":return modeleClass.etudiantLogin(username ,Password);
+            case "Admin":return  modeleClass.adminLogin(username ,Password);
+            case "Enseignant":return  modeleClass.enseignantLogin(username ,Password);
+            case "Responsable":return  modeleClass.responsableLogin(username ,Password);
             default:return new JSONObject();
         }
 
@@ -72,7 +72,7 @@ public abstract class AbstractControler {
      */
     public JSONObject deleteUser(String username){
         logger.info("Controler/delete User:"+username);
-        return adminModele.deleteUser(username);
+        return modeleClass.deleteUser(username);
     }
 
 
@@ -81,94 +81,94 @@ public abstract class AbstractControler {
      */
     public JSONObject addBatiment(String identifiant){
         logger.info("Controler/add Batiment:"+identifiant);
-        return adminModele.addBatiment(identifiant);
+        return modeleClass.addBatiment(identifiant);
     }
     /**
      *
      */
     public JSONObject deleteBatiment(String identifiant){
         logger.info("Controler/delete Batiment:"+identifiant);
-        return adminModele.deleteBatiment(identifiant);
+        return modeleClass.deleteBatiment(identifiant);
     }
     public List<Batiment> selectBatiments(){
-         return   adminModele.selectBatiments();
+         return   modeleClass.selectBatiments();
     }
 
     public JSONObject  addSalle(String identifiant, String batiment){
-        return adminModele.addSalle(identifiant,batiment);
+        return modeleClass.addSalle(identifiant,batiment);
     }
     public List<Salle> selectSalles(String batiment){
-        return   adminModele.selectSalles(batiment);
+        return   modeleClass.selectSalles(batiment);
     }
 
     public JSONObject  addDomaine(String intitule){
-        return adminModele.addDomaine(intitule);
+        return modeleClass.addDomaine(intitule);
     }
     public List<Domaine> selectDomaines(){
-        return   adminModele.selectDomaines();
+        return   modeleClass.selectDomaines();
     }
     public JSONObject  addFormation(String intitule,String niveau,int domaine){
-        return adminModele.addFormation(intitule,niveau,domaine);
+        return modeleClass.addFormation(intitule,niveau,domaine);
     }
     public List<Formation> selectFormations(int domaine){
-        return   adminModele.selectFormations( domaine);
+        return   modeleClass.selectFormations( domaine);
     }
     public JSONObject  addPromotion(int formation){
-        return adminModele.addPromotion(formation);
+        return modeleClass.addPromotion(formation);
     }
     public List<Promotion> selectPromotions(int formation){
-        return   adminModele.selectPromotions( formation);
+        return   modeleClass.selectPromotions( formation);
     }
     public JSONObject  addSection(int promotion){
-        return adminModele.addSection(promotion);
+        return modeleClass.addSection(promotion);
     }
     public List<Section> selectSections(int promotion){
-        return   adminModele.selectSections( promotion);
+        return   modeleClass.selectSections( promotion);
     }
     public JSONObject  addGroupe(int section){
-        return adminModele.addGroupe(section);
+        return modeleClass.addGroupe(section);
     }
     public List<Groupe> selectGroupes(int section){
-        return   adminModele.selectGroupes( section);
+        return   modeleClass.selectGroupes( section);
     }
     public JSONObject addModule(String identifiant,String libelle,int formation){
-        return adminModele.addModule(identifiant,libelle,formation);
+        return modeleClass.addModule(identifiant,libelle,formation);
     }
-    public  List<Module>  selectModules(int formation){return adminModele.selectModules(formation); }
-    public  List<Module>  selectModules(){return adminModele.selectModules(); }
+    public  List<Module>  selectModules(int formation){return modeleClass.selectModules(formation); }
+    public  List<Module>  selectModules(){return modeleClass.selectModules(); }
     public  List<Cours>  selectCours(int idEnseignant){
-        return  adminModele.selectCours(idEnseignant);
+        return  modeleClass.selectCours(idEnseignant);
     }
     public JSONObject addCours(int idEnseignant, int idModule){
-        return adminModele.addCours(idEnseignant,idModule);
+        return modeleClass.addCours(idEnseignant,idModule);
     }
     public  Utilisateur getUser(int idUser){
-        return adminModele.getUser(idUser);
+        return modeleClass.getUser(idUser);
     }
     public JSONObject setEtudiant(Etudiant etudiant, int idFormation, int idSection, int idGroupe){
-        return adminModele.setEtudiant(etudiant,idFormation,idSection,idGroupe);
+        return modeleClass.setEtudiant(etudiant,idFormation,idSection,idGroupe);
     }
     public JSONObject setResponsable(Responsable responsable, int idFormation){
-        return adminModele.setResponsable(responsable,idFormation);
+        return modeleClass.setResponsable(responsable,idFormation);
     }
 
    public  JSONObject addSeance(LocalTime heureDebut, LocalTime heureFin, Date date, int idSalle, int idCours,int idEnseignant){
-        return adminModele.addSeance(heureDebut,heureFin,date,idSalle,idCours,idEnseignant);
+        return modeleClass.addSeance(heureDebut,heureFin,date,idSalle,idCours,idEnseignant);
    }
     public List<Seance>  selectSeanceEnseignant(int idEnseignant,Date date ,int periode){
-       return  adminModele.selectSeanceEnseignant(idEnseignant, date, periode);
+       return  modeleClass.selectSeanceEnseignant(idEnseignant, date, periode);
     }
 
     public JSONObject annulerSeance( int idSeance){
-        return adminModele.annulerSeance(idSeance);
+        return modeleClass.annulerSeance(idSeance);
     }
     public JSONObject validerSeance(int idSeance,int status ){
-        return adminModele.validerSeance(idSeance, status);
+        return modeleClass.validerSeance(idSeance, status);
     }
     public  List<Seance> selectSeancesResponsable(int idUser,Date date ,int periode){
-        return adminModele.selectionnerSeancesResponsable(idUser, date, periode);
+        return modeleClass.selectionnerSeancesResponsable(idUser, date, periode);
     }
     public  List<Seance> selectSeancesEtudiant(int idUser,Date date ,int periode){
-         return  adminModele.selectionnerSeancesEtudiant(idUser, date, periode);
+         return  modeleClass.selectionnerSeancesEtudiant(idUser, date, periode);
     }
 }

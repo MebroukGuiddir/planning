@@ -9,13 +9,11 @@ import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Responsable;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
-
-import java.text.Format;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
-public interface IAdmin {
+public interface IModele {
 
     JSONObject addEtudiant(String nom, String prenom, String email, String password, String username, Date birthday, String genre, String adresse, String mobile) throws DaoException;
     JSONObject  addEnseignant(String nom,String prenom,String email,String password,String username,Date birthday,String genre,String adresse,String mobile);

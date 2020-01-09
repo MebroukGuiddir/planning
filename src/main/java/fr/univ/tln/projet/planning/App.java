@@ -2,9 +2,8 @@ package fr.univ.tln.projet.planning;
 
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.controler.Controler;
-import fr.univ.tln.projet.planning.exception.dao.DaoException;
 import fr.univ.tln.projet.planning.ihm.vue.*;
-import fr.univ.tln.projet.planning.modele.AdminModele;
+import fr.univ.tln.projet.planning.modele.ModeleClass;
 
 import java.io.IOException;
 
@@ -18,9 +17,9 @@ public class App
     {
         javax.swing.SwingUtilities.invokeLater(() -> {
         //creer le modéle
-            AdminModele adminModele = null;
+            ModeleClass modeleClass = null;
             try {
-                adminModele = new AdminModele();
+                modeleClass = new ModeleClass();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -28,10 +27,10 @@ public class App
             }
 
             //Création du contrôleur
-        AbstractControler controler = new Controler(adminModele);
+        AbstractControler controler = new Controler(modeleClass);
 
 
-        LoginVue  loginVue=new LoginVue(controler,adminModele);
+        LoginVue  loginVue=new LoginVue(controler, modeleClass);
 
 
     });

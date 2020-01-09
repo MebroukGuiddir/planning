@@ -23,12 +23,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Getter
-public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
-    private static Logger logger = Logger.getLogger(AdminModele.class.getName());
+public class ModeleClass<A extends IModele>  implements IModele, Observable {
+    private static Logger logger = Logger.getLogger(ModeleClass.class.getName());
     private ArrayList<Observer> listObserver = new ArrayList();
     private List<Etudiant> etudiants = new ArrayList();
     private List<Enseignant> enseignants = new ArrayList();
@@ -37,7 +36,7 @@ public class AdminModele<A extends IAdmin>  implements IAdmin, Observable {
     DB bd = new DB("Bd.properties");
 
 
-    public AdminModele() throws IOException, ClassNotFoundException {
+    public ModeleClass() throws IOException, ClassNotFoundException {
     }
 
 

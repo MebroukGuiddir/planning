@@ -3,7 +3,7 @@ package fr.univ.tln.projet.planning.ihm.vue.etudesVue;
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.controler.Changement;
 import fr.univ.tln.projet.planning.ihm.components.jTable.*;
-import fr.univ.tln.projet.planning.modele.AdminModele;
+import fr.univ.tln.projet.planning.modele.ModeleClass;
 import fr.univ.tln.projet.planning.modele.etudes.*;
 import fr.univ.tln.projet.planning.modele.observer.Observer;
 import org.json.simple.JSONObject;
@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class EtudesVue extends JPanel implements Observer {
 
     private AbstractControler controler;
-    private AdminModele modele;
+    private ModeleClass modele;
     private ModeleDynamiqueObject domainesModel=new JTableDomaine(new String[]{"Domaine"});
     private ModeleDynamiqueObject formationsModel=new JTableFormation(new String[]{"Formation","Niveau"});
     private ModeleDynamiqueObject promotionsModel=new JTablePromotion(new String[]{"Promotion"});
@@ -31,7 +31,7 @@ public class EtudesVue extends JPanel implements Observer {
     private JTable groupes;
     private JTable modules;
 
-    public EtudesVue(AbstractControler controler,AdminModele modele) {
+    public EtudesVue(AbstractControler controler, ModeleClass modele) {
         super();
         this.controler = controler;
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

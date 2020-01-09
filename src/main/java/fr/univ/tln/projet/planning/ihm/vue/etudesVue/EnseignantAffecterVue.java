@@ -4,10 +4,9 @@ import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.ihm.components.JButtonAdapter;
 import fr.univ.tln.projet.planning.ihm.components.JLabelAdapter;
 import fr.univ.tln.projet.planning.ihm.components.jTable.*;
-import fr.univ.tln.projet.planning.modele.AdminModele;
+import fr.univ.tln.projet.planning.modele.ModeleClass;
 import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Enseignant;
-import fr.univ.tln.projet.planning.modele.etudes.Module;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Utilisateur;
 import org.json.simple.JSONObject;
 import javax.swing.*;
@@ -19,7 +18,7 @@ public class EnseignantAffecterVue extends JPanel {
 
 
     private AbstractControler controler;
-    private AdminModele modele;
+    private ModeleClass modele;
 
     private ModeleDynamiqueObject modulesModel=new JTableModule(new String[]{"Module","Identifiant"});
     private JTable modules;
