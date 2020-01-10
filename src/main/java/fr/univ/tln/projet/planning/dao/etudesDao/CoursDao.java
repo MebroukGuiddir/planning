@@ -74,6 +74,7 @@ public class CoursDao extends Dao<Cours> {
                 return Cours.builder()
                         .idCours(rs.getInt("id_cours"))
                         .module(moduleDao.trouver(rs.getInt("id_module")))
+                        .enseignant(enseignantDao.trouverID(rs.getInt("id_enseignant")))
                         .build();
             }
         } catch (SQLException exp) {

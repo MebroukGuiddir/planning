@@ -244,7 +244,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
         }catch ( ObjetInconnuDaoException exe){
             logger.info("user not found :username ="+username+" password = "+password);
             message.put("status","Authentification");
-            message.put("message", "Invalid token gives");
+            message.put("message", "nom d'utilisateur ou Mot de passe incorrect. Veuillez réessayer");
             message.put("code", 401 );
             return message;
         }catch (DaoException exe){
@@ -274,7 +274,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
         }catch ( ObjetInconnuDaoException exe){
             logger.info("user not found :username ="+username);
             message.put("status","Authentification");
-            message.put("message", "Invalid token gives");
+            message.put("message", "nom d'utilisateur ou Mot de passe incorrect. Veuillez réessayer");
             message.put("code", 401 );
             return message;
         }catch (DaoException exe){
@@ -305,7 +305,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
         }catch ( ObjetInconnuDaoException exe){
             logger.info("user not found :username ="+username);
             message.put("status","Authentification");
-            message.put("message", "Invalid token gives");
+            message.put("message", "nom d'utilisateur ou Mot de passe incorrect. Veuillez réessayer");
             message.put("code", 401 );
             return message;
         }catch (DaoException exe){
@@ -336,7 +336,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
         }catch ( ObjetInconnuDaoException exe){
             logger.info("user not found :username ="+username);
             message.put("status","Authentification");
-            message.put("message", "Invalid token gives");
+            message.put("message", "nom d'utilisateur ou Mot de passe incorrect. Veuillez réessayer");
             message.put("code", 401 );
             return message;
         }catch (DaoException exe){
@@ -383,7 +383,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
 
         }catch (ObjectExistDaoException e){
             message.put("status", "insert error");
-            message.put("message", "ce Batiment exist deja");
+            message.put("message", "ce Batiment existe déjà");
             message.put("code", 500);
             return message;
         } catch (DaoException e) {
@@ -402,7 +402,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
             Batiment.setDao(dao);
             dao.supprimer(identifiant);
             message.put("status", "Success");
-            message.put("message", "batiment supprimer");
+            message.put("message", "batiment supprimé");
             message.put("code", 200);
             return message;
 
@@ -432,7 +432,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
 
         }catch (ObjectExistDaoException e){
             message.put("status", "insert error");
-            message.put("message", "cette salle exist deja");
+            message.put("message", "cette salle existe déjà");
             message.put("code", 500);
             return message;
         } catch (DaoException e) {
@@ -552,13 +552,13 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
     @Override
     public JSONObject addPromotion(int formation) {
         JSONObject message = new JSONObject();
-        logger.info("Model/ add  Module");
+        logger.info("Model/ add  promo");
         try {
             PromotionDao dao = new PromotionDao(bd);
             Promotion.setDao(dao);
             dao.creer(formation);
             message.put("status", "Success");
-            message.put("message", "Module ajouté");
+            message.put("message", "Promotion ajouté");
             message.put("code", 200);
             notifyObserver(message,Changement.builder().section( Changement.Section.PROMOTION).type(Changement.Type.ADD).build());
             return message;
@@ -600,7 +600,7 @@ public class ModeleClass<A extends IModele>  implements IModele, Observable {
             Section.setDao(dao);
             dao.creer(promotion);
             message.put("status", "Success");
-            message.put("message", "Section added");
+            message.put("message", "Section ajouté");
             message.put("code", 200);
             notifyObserver(message,Changement.builder().section( Changement.Section.SECTION).type(Changement.Type.ADD).build());
             return message;

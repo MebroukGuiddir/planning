@@ -2,8 +2,10 @@ package fr.univ.tln.projet.planning.ihm.components.jTable;
 
 import fr.univ.tln.projet.planning.modele.etudes.Seance;
 
-public class JTablePlanningEnseignant extends ModeleDynamiqueObject {
-    public JTablePlanningEnseignant(String[] entetes) {
+
+
+public class JTablePlanningEtudiant extends ModeleDynamiqueObject {
+    public JTablePlanningEtudiant(String[] entetes) {
         super(entetes);
     }
 
@@ -20,6 +22,7 @@ public class JTablePlanningEnseignant extends ModeleDynamiqueObject {
                 case 1 :return "Valider";
                 case -2 :return  "Annuler";
             }
+            case 5:return ((Seance) rows.get(rowIndex)).getCours().getEnseignant().getNom()+"  "+((Seance) rows.get(rowIndex)).getCours().getEnseignant().getNom();
 
             default: return null;
         }

@@ -158,7 +158,7 @@ public class LoginVue extends JFrame{
         JMenu jMenu = new JMenu();
         switch (typeCompte) {
             case "Etudiant": JPanel p = new EtudiantVue(controler,(Etudiant) utilisateur);
-                jMenu.addItem("planning", p);
+                jMenu.addItem("Planning étudiant", p);
                 break;
             case "Admin":
                 JPanel p1 = new ListUserVue(controler);
@@ -172,12 +172,12 @@ public class LoginVue extends JFrame{
             case "Enseignant":
 
                 JPanel p4 = new  PlanningEnseignantVue(controler,(Enseignant) utilisateur);
-                jMenu.addItem("planning", p4);
+                jMenu.addItem("Planning enseignant", p4);
                 break;
             case "Responsable":
 
                 JPanel p5 = new ResponsableVue(controler,(Responsable) utilisateur);
-                jMenu.addItem("planning", p5);
+                jMenu.addItem("Valider Séances", p5);
                 break;
 
         }

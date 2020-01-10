@@ -51,7 +51,7 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM Utilisateur WHERE username=? AND password=?")){
             statement.setString(1,username);
-            statement.setString(2,password);
+            statement.setString(2,MD5(password));
             ResultSet rs= statement.executeQuery( );
             if (!rs.next( ))
                 throw new ObjetInconnuDaoException("Utlisateur inexistant : "+username);
@@ -157,7 +157,7 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
                          "INSERT INTO utilisateur (email,username,password,nom,prenom,adresse,mobile,dateNaissance,genre,dateCreation) VALUES (?,?,?,?,?,?,?,?,?,?)" , Statement.RETURN_GENERATED_KEYS)){
                 statement.setString(1, email);
                 statement.setString(2, username);
-                statement.setString(3, password);
+                statement.setString(3, MD5(password));
                 statement.setString(4, nom);
                 statement.setString(5, prenom);
                 statement.setString(6, adresse);
@@ -222,5 +222,19 @@ public class UtilisateurDao<F> extends Dao<Utilisateur> {
     public void supprimer(Utilisateur utilisateur) throws DaoException {
 
         supprimer(utilisateur.getUsername());
+    }
+
+    public static String MD5(String md5) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(md5.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
     }
 }

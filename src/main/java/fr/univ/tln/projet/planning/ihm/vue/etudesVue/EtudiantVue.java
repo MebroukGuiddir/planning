@@ -3,6 +3,7 @@ package fr.univ.tln.projet.planning.ihm.vue.etudesVue;
 import fr.univ.tln.projet.planning.controler.AbstractControler;
 import fr.univ.tln.projet.planning.ihm.components.JdatePickerAdapter;
 import fr.univ.tln.projet.planning.ihm.components.jTable.JTablePlanningEnseignant;
+import fr.univ.tln.projet.planning.ihm.components.jTable.JTablePlanningEtudiant;
 import fr.univ.tln.projet.planning.ihm.components.jTable.ModeleDynamiqueObject;
 import fr.univ.tln.projet.planning.modele.utilisateurs.Etudiant;
 
@@ -17,7 +18,7 @@ import java.util.Date;
     public class EtudiantVue extends JPanel {
 
         private AbstractControler controler;
-        private ModeleDynamiqueObject seancesModel=new JTablePlanningEnseignant(new String[]{"Date","Heure","Salle","Cours","Status"});
+        private ModeleDynamiqueObject seancesModel=new JTablePlanningEtudiant(new String[]{"Date","Heure","Salle","Cours","Status","Enseignant"});
         private JTable seances;
         public EtudiantVue(AbstractControler controler, Etudiant etudiant) {
             super();

@@ -102,11 +102,34 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
 
     }
 
+    public   Enseignant trouverID(int id_enseignant ) throws DaoException{
+        try (Connection connection = this.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE e.id_enseignant=? and e.id_user=u.id_user")){
+            statement.setInt(1, id_enseignant);
+            ResultSet rs= statement.executeQuery( );
 
+            if (!rs.next( ))
+                throw new ObjetInconnuDaoException("Enseignant inexistante ");
+
+            else return Enseignant.builder()
+                    .idEnseignant(rs.getInt("id_enseignant"))
+                    .idUser(rs.getInt("id_user"))
+                    .nom(rs.getString("nom"))
+                    .prenom(rs.getString("prenom"))
+                    .email(rs.getString("email"))
+                    .username(rs.getString("username"))
+                    .dateNaissance(rs.getDate("dateNaissance"))
+                    .adresse(rs.getString("adresse"))
+                    .build();
+
+        }
+        catch (SQLException exp) {throw new DaoException(exp);}
+    }
     public   Enseignant trouver(int id_user ) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE e.id_user=?")){
+                     connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE e.id_user=? and e.id_user=u.id_user")){
             statement.setInt(1, id_user);
             ResultSet rs= statement.executeQuery( );
 
@@ -133,7 +156,7 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM enseignant e, utilisateur u WHERE u.username=? AND u.password=? AND e.id_user=u.id_user")){
             statement.setString(1, username);
-            statement.setString(2, password);
+            statement.setString(2, MD5(password));
             ResultSet rs= statement.executeQuery( );
 
             if (!rs.next( ))
@@ -158,7 +181,19 @@ public class EnseignantDao extends  UtilisateurDao <Enseignant>{
         catch (SQLException exp) {throw new DaoException(exp);}
     }
 
-
+    public static String MD5(String md5) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(md5.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+    }
 
 }
 

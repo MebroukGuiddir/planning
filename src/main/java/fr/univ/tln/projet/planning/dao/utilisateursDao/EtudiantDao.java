@@ -106,7 +106,7 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
              PreparedStatement statement =
                      connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE u.username=? AND u.password=? AND e.id_user=u.id_user")){
             statement.setString(1, username);
-            statement.setString(2, password);
+            statement.setString(2,MD5( password));
             ResultSet rs= statement.executeQuery( );
 
             if (!rs.next( ))
@@ -150,7 +150,7 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
     public   Etudiant trouver(int id_user ) throws DaoException{
         try (Connection connection = this.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE e.id_user=?")){
+                     connection.prepareStatement("SELECT * FROM etudiant e, utilisateur u WHERE e.id_user=? and e.id_user=u.id_user ")){
              statement.setInt(1, id_user);
             ResultSet rs= statement.executeQuery( );
 
@@ -268,4 +268,17 @@ public class EtudiantDao extends UtilisateurDao <Etudiant > {
         catch (SQLException exp) {throw new DaoException(exp);}
     }
 
+    public static String MD5(String md5) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(md5.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+    }
 }
